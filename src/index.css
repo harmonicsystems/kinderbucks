@@ -1,0 +1,24 @@
+:root {
+  --kb-green: #2d5a27;
+  --kb-green-light: #4a7c43;
+  --kb-gold: #c9a227;
+  --kb-cream: #f5f2e8;
+  --kb-brown: #5c4033;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--kb-cream);
+  color: var(--kb-brown);
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
