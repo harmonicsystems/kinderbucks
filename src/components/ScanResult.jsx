@@ -65,6 +65,22 @@ function ScanResult({ kinderbuck }) {
         )}
         <p>Scans: {kinderbuck.scanCount || 1}</p>
       </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.8, type: 'spring' }}
+        style={{ marginTop: '1.5rem' }}
+      >
+        <iframe
+          src="https://giphy.com/embed/B1txHfofr9y08bDB8b"
+          width="200"
+          height="200"
+          frameBorder="0"
+          style={{ borderRadius: '12px', pointerEvents: 'none' }}
+          allowFullScreen
+        />
+      </motion.div>
     </motion.div>
   )
 }
