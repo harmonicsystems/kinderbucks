@@ -1,107 +1,87 @@
-// DEMO MODE: Using localStorage instead of Firebase
-// Switch to Firebase later by uncommenting the imports and swapping function implementations
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+  updateDoc,
+  increment,
+  serverTimestamp,
+  addDoc,
+  query,
+  orderBy
+} from 'firebase/firestore'
+import { db } from './config'
 
-// import {
-//   collection, doc, getDoc, getDocs, setDoc, updateDoc,
-//   increment, serverTimestamp, addDoc, query, orderBy
-// } from 'firebase/firestore'
-// import { db } from './config'
-
-const STORAGE_KEY = 'kinderbucks_demo'
-const SCANS_KEY = 'kinderbucks_scans'
-
-// Demo mode helpers
-function getStorage() {
-  const data = localStorage.getItem(STORAGE_KEY)
-  return data ? JSON.parse(data) : {}
-}
-
-function setStorage(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
-}
-
-function getScansStorage() {
-  const data = localStorage.getItem(SCANS_KEY)
-  return data ? JSON.parse(data) : []
-}
-
-function setScansStorage(data) {
-  localStorage.setItem(SCANS_KEY, JSON.stringify(data))
-}
+const COLLECTION = 'kinderbucks'
+const SCANS_COLLECTION = 'scans'
 
 /**
  * Get a single Kinderbuck by serial number
  */
 export async function getKinderbuck(serial) {
-  const storage = getStorage()
-  return storage[serial] || null
+  const docRef = doc(db, COLLECTION, serial)
+  const docSnap = await getDoc(docRef)
+  if (docSnap.exists()) {
+    return { serial: docSnap.id, ...docSnap.data() }
+  }
+  return null
 }
 
 /**
  * Get all Kinderbucks
  */
 export async function getAllKinderbucks() {
-  const storage = getStorage()
-  return Object.values(storage).sort((a, b) => a.serial.localeCompare(b.serial))
+  const q = query(collection(db, COLLECTION), orderBy('serial'))
+  const snapshot = await getDocs(q)
+  return snapshot.docs.map(doc => ({ serial: doc.id, ...doc.data() }))
 }
 
 /**
  * Create multiple Kinderbucks with a given denomination
  */
 export async function createKinderbucks(serials, denomination) {
-  const storage = getStorage()
-  const now = new Date().toISOString()
-
-  for (const serial of serials) {
-    storage[serial] = {
+  const promises = serials.map(serial =>
+    setDoc(doc(db, COLLECTION, serial), {
       serial,
       denomination,
       status: 'draft',
       scanCount: 0,
-      createdAt: { seconds: Date.now() / 1000 },
-    }
-  }
-
-  setStorage(storage)
+      createdAt: serverTimestamp(),
+    })
+  )
+  await Promise.all(promises)
 }
 
 /**
  * Update Kinderbuck status (issue, activate, redeem, retire)
  */
 export async function updateKinderbuckStatus(serial, status, issuedTo = null) {
-  const storage = getStorage()
-
-  if (storage[serial]) {
-    storage[serial].status = status
-    if (status === 'issued') {
-      storage[serial].issuedAt = { seconds: Date.now() / 1000 }
-    }
-    if (issuedTo) {
-      storage[serial].issuedTo = issuedTo
-    }
-    setStorage(storage)
+  const docRef = doc(db, COLLECTION, serial)
+  const update = {
+    status,
+    ...(status === 'issued' && { issuedAt: serverTimestamp() }),
+    ...(issuedTo && { issuedTo }),
   }
+  await updateDoc(docRef, update)
 }
 
 /**
  * Record a scan event
  */
 export async function recordScan(serial) {
-  const storage = getStorage()
+  // Update scan count on the Kinderbuck
+  const docRef = doc(db, COLLECTION, serial)
+  await updateDoc(docRef, {
+    scanCount: increment(1),
+    lastScanned: serverTimestamp(),
+    status: 'active', // Mark as active once scanned
+  })
 
-  if (storage[serial]) {
-    storage[serial].scanCount = (storage[serial].scanCount || 0) + 1
-    storage[serial].lastScanned = { seconds: Date.now() / 1000 }
-    storage[serial].status = 'active'
-    setStorage(storage)
-  }
-
-  // Record individual scan
-  const scans = getScansStorage()
-  scans.push({
+  // Record individual scan event
+  await addDoc(collection(db, SCANS_COLLECTION), {
     serial,
-    scannedAt: { seconds: Date.now() / 1000 },
+    scannedAt: serverTimestamp(),
     userAgent: navigator.userAgent || null,
   })
-  setScansStorage(scans)
 }
