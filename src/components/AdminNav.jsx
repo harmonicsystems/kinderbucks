@@ -7,6 +7,7 @@ function AdminNav() {
     { to: '/admin/dashboard', label: 'Dashboard' },
     { to: '/admin/generate', label: 'Generate' },
     { to: '/admin/issue', label: 'Issue' },
+    { to: '/admin/businesses', label: 'Businesses' },
   ]
 
   return (
