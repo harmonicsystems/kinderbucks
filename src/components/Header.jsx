@@ -1,17 +1,29 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
+import { LogIn, LogOut, User, Store, Shield, CreditCard } from 'lucide-react'
+import { useAuth } from '../contexts/AuthContext'
+import { logOut } from '../firebase/auth'
 
 function Header() {
   const location = useLocation()
+  const navigate = useNavigate()
+  const { user, profile, isAuthenticated, isAdmin, isBusiness } = useAuth()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
 
   const navLinks = [
     { to: '/', label: 'Home' },
+    { to: '/map', label: 'Village Map' },
     { to: '/demo', label: 'See Demo' },
     { to: '/about', label: 'How It Works' },
-    { to: '/benefits', label: 'Benefits' },
     { to: '/businesses', label: 'For Businesses' },
   ]
+
+  const handleLogout = async () => {
+    await logOut()
+    setUserMenuOpen(false)
+    navigate('/')
+  }
 
   const isActive = (path) => location.pathname === path
 
@@ -32,8 +44,8 @@ function Header() {
         justifyContent: 'space-between',
         height: '70px',
       }}>
-        {/* Logo */}
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}>
+        {/* Logo - go to map for authenticated users, home for guests */}
+        <Link to={isAuthenticated ? "/map" : "/"} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}>
           <div style={{
             width: '40px',
             height: '40px',
@@ -96,9 +108,136 @@ function Header() {
 
         {/* CTA Buttons */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }} className="desktop-nav">
-          <Link to="/account" className="btn btn-secondary" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}>
-            My Account
-          </Link>
+          {isAuthenticated ? (
+            <>
+              {/* User Menu */}
+              <div style={{ position: 'relative' }}>
+                <button
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    padding: '0.5rem 1rem',
+                    background: 'var(--kb-gray-100)',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    color: 'var(--kb-navy)',
+                    fontWeight: '500',
+                  }}
+                >
+                  <User size={18} />
+                  {profile?.displayName || user.email?.split('@')[0]}
+                </button>
+
+                {userMenuOpen && (
+                  <div style={{
+                    position: 'absolute',
+                    right: 0,
+                    top: '100%',
+                    marginTop: '0.5rem',
+                    background: 'white',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                    minWidth: '180px',
+                    zIndex: 200,
+                    overflow: 'hidden',
+                  }}>
+                    <Link
+                      to="/card"
+                      onClick={() => setUserMenuOpen(false)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        padding: '0.75rem 1rem',
+                        color: 'var(--kb-gold-dark)',
+                        textDecoration: 'none',
+                        borderBottom: '1px solid var(--kb-gray-100)',
+                        fontWeight: '600',
+                        background: 'rgba(201, 162, 39, 0.1)',
+                      }}
+                    >
+                      <CreditCard size={16} /> My OK Card
+                    </Link>
+                    <Link
+                      to="/profile"
+                      onClick={() => setUserMenuOpen(false)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        padding: '0.75rem 1rem',
+                        color: 'var(--kb-gray-700)',
+                        textDecoration: 'none',
+                        borderBottom: '1px solid var(--kb-gray-100)',
+                      }}
+                    >
+                      <User size={16} /> My Profile
+                    </Link>
+                    {isBusiness && (
+                      <Link
+                        to="/business/dashboard"
+                        onClick={() => setUserMenuOpen(false)}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.5rem',
+                          padding: '0.75rem 1rem',
+                          color: '#2563eb',
+                          textDecoration: 'none',
+                          borderBottom: '1px solid var(--kb-gray-100)',
+                        }}
+                      >
+                        <Store size={16} /> Business Dashboard
+                      </Link>
+                    )}
+                    {isAdmin && (
+                      <Link
+                        to="/admin/dashboard"
+                        onClick={() => setUserMenuOpen(false)}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.5rem',
+                          padding: '0.75rem 1rem',
+                          color: '#dc2626',
+                          textDecoration: 'none',
+                          borderBottom: '1px solid var(--kb-gray-100)',
+                        }}
+                      >
+                        <Shield size={16} /> Admin Portal
+                      </Link>
+                    )}
+                    <button
+                      onClick={handleLogout}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        padding: '0.75rem 1rem',
+                        color: 'var(--kb-gray-600)',
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        width: '100%',
+                        textAlign: 'left',
+                      }}
+                    >
+                      <LogOut size={16} /> Sign Out
+                    </button>
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="btn btn-secondary" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <LogIn size={16} /> Sign In
+              </Link>
+            </>
+          )}
           <Link to="/exchange" className="btn btn-gold" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}>
             Get Kinderbucks
           </Link>
@@ -149,20 +288,72 @@ function Header() {
               {link.label}
             </Link>
           ))}
-          <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem' }}>
-            <Link
-              to="/account"
-              onClick={() => setMobileMenuOpen(false)}
-              className="btn btn-secondary"
-              style={{ flex: 1 }}
-            >
-              My Account
-            </Link>
+          <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            {isAuthenticated ? (
+              <>
+                <div style={{
+                  padding: '0.75rem',
+                  background: 'var(--kb-gray-50)',
+                  borderRadius: '8px',
+                  marginBottom: '0.5rem',
+                }}>
+                  <div style={{ fontWeight: '500', color: 'var(--kb-navy)' }}>
+                    {profile?.displayName || user.email}
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--kb-gray-500)' }}>
+                    {profile?.role || 'member'}
+                  </div>
+                </div>
+                <Link
+                  to="/profile"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="btn btn-secondary"
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+                >
+                  <User size={16} /> My Profile
+                </Link>
+                {isBusiness && (
+                  <Link
+                    to="/business/dashboard"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="btn"
+                    style={{ background: '#2563eb', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+                  >
+                    <Store size={16} /> Business Dashboard
+                  </Link>
+                )}
+                {isAdmin && (
+                  <Link
+                    to="/admin/dashboard"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="btn"
+                    style={{ background: '#dc2626', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+                  >
+                    <Shield size={16} /> Admin Portal
+                  </Link>
+                )}
+                <button
+                  onClick={() => { handleLogout(); setMobileMenuOpen(false); }}
+                  className="btn btn-secondary"
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+                >
+                  <LogOut size={16} /> Sign Out
+                </button>
+              </>
+            ) : (
+              <Link
+                to="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="btn btn-secondary"
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+              >
+                <LogIn size={16} /> Sign In
+              </Link>
+            )}
             <Link
               to="/exchange"
               onClick={() => setMobileMenuOpen(false)}
               className="btn btn-gold"
-              style={{ flex: 1 }}
             >
               Get Kinderbucks
             </Link>

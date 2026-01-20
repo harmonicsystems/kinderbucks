@@ -66,3 +66,19 @@ export async function toggleBusinessActive(code, isActive) {
   const docRef = doc(db, COLLECTION, code)
   await updateDoc(docRef, { isActive })
 }
+
+/**
+ * Update business location and details
+ */
+export async function updateBusinessDetails(code, details) {
+  const docRef = doc(db, COLLECTION, code)
+  await updateDoc(docRef, details)
+}
+
+/**
+ * Get all active businesses with location data
+ */
+export async function getActiveBusinessesWithLocations() {
+  const businesses = await getAllBusinesses()
+  return businesses.filter(b => b.isActive && b.location)
+}

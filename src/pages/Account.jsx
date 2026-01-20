@@ -1,6 +1,17 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import {
+  Target,
+  Star,
+  Award,
+  Crown,
+  Banknote,
+  Store,
+  Sparkles,
+  Check,
+  Compass
+} from 'lucide-react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { getVisitorId, getMember } from '../firebase/members'
@@ -8,6 +19,13 @@ import { getAllBusinesses } from '../firebase/businesses'
 import { collection, query, where, getDocs, orderBy } from 'firebase/firestore'
 import { db } from '../firebase/config'
 import { TIERS, getProgressToNextTier } from '../utils/tiers'
+
+const TIER_ICONS = {
+  curious: Target,
+  hooked: Star,
+  lineAndSinker: Award,
+  patron: Crown,
+}
 
 function Account() {
   const [member, setMember] = useState(null)
@@ -90,9 +108,11 @@ function Account() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '2.5rem',
             }}>
-              {tier ? tier.emoji : '🎣'}
+              {(() => {
+                const TierIcon = tierKey && TIER_ICONS[tierKey] ? TIER_ICONS[tierKey] : Target
+                return <TierIcon size={40} color="white" strokeWidth={1.5} />
+              })()}
             </div>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: '0.9rem', color: 'var(--kb-gray-300)', marginBottom: '0.25rem' }}>
@@ -184,14 +204,14 @@ function Account() {
               <div className="card">
                 <h3 style={{ color: 'var(--kb-navy)', marginBottom: '1rem' }}>Quick Actions</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.75rem' }}>
-                  <Link to="/exchange" className="btn btn-gold" style={{ textAlign: 'center' }}>
-                    💵 Exchange
+                  <Link to="/exchange" className="btn btn-gold" style={{ textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                    <Banknote size={18} /> Exchange
                   </Link>
-                  <Link to="/businesses" className="btn btn-secondary" style={{ textAlign: 'center' }}>
-                    🏪 Find Businesses
+                  <Link to="/businesses" className="btn btn-secondary" style={{ textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                    <Store size={18} /> Find Businesses
                   </Link>
-                  <Link to="/benefits" className="btn btn-secondary" style={{ textAlign: 'center' }}>
-                    ⭐ View Benefits
+                  <Link to="/benefits" className="btn btn-secondary" style={{ textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                    <Sparkles size={18} /> View Benefits
                   </Link>
                 </div>
               </div>
@@ -227,8 +247,8 @@ function Account() {
                       </p>
                     </>
                   ) : (
-                    <p style={{ color: 'var(--kb-gold)', fontWeight: '600' }}>
-                      👑 Maximum tier reached! You're a Village Patron!
+                    <p style={{ color: 'var(--kb-gold)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <Crown size={20} /> Maximum tier reached! You're a Village Patron!
                     </p>
                   )}
                 </div>
@@ -236,8 +256,8 @@ function Account() {
 
               {/* Visited */}
               <div className="card" style={{ marginBottom: '1.5rem' }}>
-                <h3 style={{ color: 'var(--kb-navy)', marginBottom: '1rem' }}>
-                  ✓ Businesses Visited ({visitedBusinessNames.length})
+                <h3 style={{ color: 'var(--kb-navy)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Check size={20} color="var(--kb-green)" /> Businesses Visited ({visitedBusinessNames.length})
                 </h3>
                 {visitedBusinessNames.length > 0 ? (
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
@@ -250,9 +270,12 @@ function Account() {
                           padding: '0.4rem 0.75rem',
                           borderRadius: '100px',
                           fontSize: '0.85rem',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.25rem',
                         }}
                       >
-                        ✓ {name}
+                        <Check size={14} /> {name}
                       </span>
                     ))}
                   </div>
@@ -264,8 +287,8 @@ function Account() {
               {/* Still to Visit */}
               {unvisitedBusinesses.length > 0 && (
                 <div className="card">
-                  <h3 style={{ color: 'var(--kb-navy)', marginBottom: '1rem' }}>
-                    🎯 Still to Explore ({unvisitedBusinesses.length})
+                  <h3 style={{ color: 'var(--kb-navy)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Compass size={20} color="var(--kb-navy)" /> Still to Explore ({unvisitedBusinesses.length})
                   </h3>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                     {unvisitedBusinesses.slice(0, 12).map((biz) => (

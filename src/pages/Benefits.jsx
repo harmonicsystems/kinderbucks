@@ -1,5 +1,16 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import {
+  Coins,
+  Store,
+  Star,
+  Gift,
+  BarChart3,
+  Users,
+  Target,
+  Award,
+  Crown
+} from 'lucide-react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { TIERS } from '../utils/tiers'
@@ -7,37 +18,37 @@ import { TIERS } from '../utils/tiers'
 function Benefits() {
   const benefits = [
     {
-      icon: '💰',
+      Icon: Coins,
       title: 'Bonus Exchange Rates',
       description: 'Get up to 25% extra when converting USD to Kinderbucks. A $100 exchange becomes $125 in local spending power.',
       highlight: 'Up to 25% bonus',
     },
     {
-      icon: '🏪',
+      Icon: Store,
       title: 'Exclusive Local Deals',
       description: 'Participating businesses offer special discounts and promotions exclusively for Kinderhooker members.',
       highlight: 'Member-only offers',
     },
     {
-      icon: '⭐',
+      Icon: Star,
       title: 'Priority Access',
       description: 'Higher-tier members get early access to limited events, seasonal specials, and new business openings.',
       highlight: 'First in line',
     },
     {
-      icon: '🎁',
+      Icon: Gift,
       title: 'Seasonal Bonuses',
       description: 'Extra rewards during holidays and special village events. Double check-in points, bonus exchanges, and more.',
       highlight: 'Special events',
     },
     {
-      icon: '📊',
+      Icon: BarChart3,
       title: 'Impact Tracking',
       description: 'See exactly how your spending supports local businesses and contributes to the village economy.',
       highlight: 'Track your impact',
     },
     {
-      icon: '🤝',
+      Icon: Users,
       title: 'Community Recognition',
       description: 'Village Patrons are recognized in our annual report and invited to exclusive community appreciation events.',
       highlight: 'Be celebrated',
@@ -88,7 +99,7 @@ function Benefits() {
                 <tr>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <span>🎣</span>
+                      <Target size={18} color="#888" />
                       <span style={{ fontWeight: '600', color: '#888' }}>Curious</span>
                     </div>
                   </td>
@@ -101,7 +112,7 @@ function Benefits() {
                 <tr>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <span>🎣</span>
+                      <Star size={18} color="#2e7d32" />
                       <span style={{ fontWeight: '600', color: '#2e7d32' }}>Hooked</span>
                     </div>
                   </td>
@@ -114,7 +125,7 @@ function Benefits() {
                 <tr>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <span>🎣</span>
+                      <Award size={18} color="#1565c0" />
                       <span style={{ fontWeight: '600', color: '#1565c0' }}>Line & Sinker</span>
                     </div>
                   </td>
@@ -127,7 +138,7 @@ function Benefits() {
                 <tr style={{ background: 'rgba(201, 162, 39, 0.1)' }}>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <span>👑</span>
+                      <Crown size={18} color="#c9a227" />
                       <span style={{ fontWeight: '600', color: '#c9a227' }}>Village Patron</span>
                     </div>
                   </td>
@@ -183,10 +194,9 @@ function Benefits() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '1.5rem',
                     flexShrink: 0,
                   }}>
-                    {benefit.icon}
+                    <benefit.Icon size={24} color="var(--kb-gold)" strokeWidth={1.5} />
                   </div>
                   <div>
                     <h3 style={{ color: 'var(--kb-navy)', marginBottom: '0.25rem', fontSize: '1.1rem' }}>

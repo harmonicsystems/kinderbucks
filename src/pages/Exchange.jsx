@@ -1,12 +1,20 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { Target, Star, Award, Crown, Lightbulb, MapPin } from 'lucide-react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { getVisitorId, getMember } from '../firebase/members'
 import { TIERS, calculateTier } from '../utils/tiers'
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
 import { db } from '../firebase/config'
+
+const TIER_ICONS = {
+  curious: Target,
+  hooked: Star,
+  lineAndSinker: Award,
+  patron: Crown,
+}
 
 function Exchange() {
   const [member, setMember] = useState(null)
@@ -109,7 +117,10 @@ function Exchange() {
                       Your Tier
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <span style={{ fontSize: '1.5rem' }}>{tier.emoji}</span>
+                      {(() => {
+                        const TierIcon = TIER_ICONS[tierKey] || Target
+                        return <TierIcon size={28} color={tier.color} strokeWidth={1.5} />
+                      })()}
                       <span style={{ fontWeight: '600', color: tier.color, fontSize: '1.2rem' }}>
                         {tier.name}
                       </span>
@@ -136,8 +147,11 @@ function Exchange() {
                     borderRadius: '8px',
                     fontSize: '0.85rem',
                     color: 'var(--kb-gray-600)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
                   }}>
-                    💡 <Link to="/profile" style={{ color: 'var(--kb-navy)' }}>Visit businesses</Link> to increase your tier and get better rates!
+                    <Lightbulb size={16} color="var(--kb-gold)" /> <Link to="/profile" style={{ color: 'var(--kb-navy)' }}>Visit businesses</Link> to increase your tier and get better rates!
                   </div>
                 )}
               </div>
@@ -230,9 +244,12 @@ function Exchange() {
               <div className="card" style={{ marginTop: '1.5rem' }}>
                 <h4 style={{ color: 'var(--kb-navy)', marginBottom: '1rem' }}>Exchange Locations</h4>
                 <div style={{ color: 'var(--kb-gray-600)', fontSize: '0.95rem' }}>
-                  <p style={{ marginBottom: '0.5rem' }}>📍 <strong>OK Pantry</strong> - 2 Hudson Street</p>
-                  <p style={{ marginBottom: '0.5rem' }}>📍 <strong>Community Bank NA</strong> - 19 Broad Street</p>
-                  <p>📍 <strong>Village Hall</strong> - During events</p>
+                  <p style={{ marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <MapPin size={16} color="var(--kb-green)" /> <strong>OK Pantry</strong> - 2 Hudson Street
+                  </p>
+                  <p style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <MapPin size={16} color="var(--kb-green)" /> <strong>Village Hall</strong> - During events
+                  </p>
                 </div>
               </div>
             </>

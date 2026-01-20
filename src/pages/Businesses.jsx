@@ -1,15 +1,27 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import {
+  UtensilsCrossed,
+  ShoppingBag,
+  Briefcase,
+  Palette,
+  Users,
+  RefreshCw,
+  Megaphone,
+  Trophy,
+  Banknote,
+  BarChart3
+} from 'lucide-react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { getAllBusinesses } from '../firebase/businesses'
 
 const CATEGORIES = {
-  food: { label: 'Food & Drink', emoji: '🍽️', color: '#e74c3c' },
-  retail: { label: 'Retail', emoji: '🛍️', color: '#9b59b6' },
-  services: { label: 'Services', emoji: '💼', color: '#3498db' },
-  arts: { label: 'Arts & Culture', emoji: '🎨', color: '#1abc9c' },
+  food: { label: 'Food & Drink', Icon: UtensilsCrossed, color: '#e74c3c' },
+  retail: { label: 'Retail', Icon: ShoppingBag, color: '#9b59b6' },
+  services: { label: 'Services', Icon: Briefcase, color: '#3498db' },
+  arts: { label: 'Arts & Culture', Icon: Palette, color: '#1abc9c' },
 }
 
 function Businesses() {
@@ -72,32 +84,32 @@ function Businesses() {
           }}>
             {[
               {
-                icon: '👥',
+                Icon: Users,
                 title: 'Committed Customers',
                 description: 'Kinderbucks holders have already decided to spend locally. They\'re not comparison shopping online.',
               },
               {
-                icon: '🔄',
+                Icon: RefreshCw,
                 title: 'Money Stays Local',
                 description: 'Unlike credit cards that send fees elsewhere, Kinderbucks keep circulating in our village economy.',
               },
               {
-                icon: '📢',
+                Icon: Megaphone,
                 title: 'Free Marketing',
                 description: 'Get listed in our business directory, featured on our homepage, and promoted to all members.',
               },
               {
-                icon: '🏆',
+                Icon: Trophy,
                 title: 'Community Standing',
                 description: 'Show customers you\'re invested in Kinderhook\'s future. Participating businesses are community leaders.',
               },
               {
-                icon: '💵',
+                Icon: Banknote,
                 title: 'Easy Redemption',
                 description: 'Redeem Kinderbucks for USD at any time through our simple merchant portal. No waiting.',
               },
               {
-                icon: '📊',
+                Icon: BarChart3,
                 title: 'Customer Insights',
                 description: 'Access check-in data and understand your customers\' behavior across the village.',
               },
@@ -111,7 +123,18 @@ function Businesses() {
                 className="card"
                 style={{ textAlign: 'center' }}
               >
-                <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>{benefit.icon}</div>
+                <div style={{
+                  width: '60px',
+                  height: '60px',
+                  background: 'var(--kb-navy)',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  margin: '0 auto 1rem',
+                }}>
+                  <benefit.Icon size={28} color="var(--kb-gold)" strokeWidth={1.5} />
+                </div>
                 <h3 style={{ color: 'var(--kb-navy)', marginBottom: '0.5rem' }}>{benefit.title}</h3>
                 <p style={{ color: 'var(--kb-gray-600)', fontSize: '0.95rem' }}>{benefit.description}</p>
               </motion.div>
@@ -201,9 +224,9 @@ function Businesses() {
                 key={key}
                 onClick={() => setFilter(key)}
                 className={filter === key ? 'btn btn-primary' : 'btn btn-secondary'}
-                style={{ padding: '0.5rem 1rem' }}
+                style={{ padding: '0.5rem 1rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
               >
-                {cat.emoji} {cat.label}
+                <cat.Icon size={16} /> {cat.label}
               </button>
             ))}
           </div>
@@ -240,9 +263,8 @@ function Businesses() {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontSize: '1.2rem',
                       }}>
-                        {cat.emoji}
+                        <cat.Icon size={20} color={cat.color} strokeWidth={1.5} />
                       </div>
                       <div>
                         <h4 style={{ color: 'var(--kb-navy)', margin: 0, fontSize: '1rem' }}>

@@ -1,9 +1,36 @@
-import { Link } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import {
+  ArrowRightLeft,
+  Store,
+  QrCode,
+  TrendingUp,
+  Award,
+  Crown,
+  Star,
+  Target
+} from 'lucide-react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import { useAuth } from '../contexts/AuthContext'
 
 function Home() {
+  const { isAuthenticated, loading } = useAuth()
+  const navigate = useNavigate()
+
+  // Redirect authenticated users to their card
+  useEffect(() => {
+    if (!loading && isAuthenticated) {
+      navigate('/card', { replace: true })
+    }
+  }, [isAuthenticated, loading, navigate])
+
+  // Show nothing while checking auth (prevents flash)
+  if (loading) {
+    return null
+  }
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Header />
@@ -66,39 +93,6 @@ function Home() {
         </motion.div>
       </section>
 
-      {/* Stats Section */}
-      <section style={{
-        background: 'var(--kb-white)',
-        padding: '3rem 1rem',
-        borderBottom: '1px solid var(--kb-gray-200)',
-      }}>
-        <div style={{
-          maxWidth: '1000px',
-          margin: '0 auto',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '2rem',
-          textAlign: 'center',
-        }}>
-          <div>
-            <div className="stat-value" style={{ color: 'var(--kb-navy)' }}>$10,000</div>
-            <div className="stat-label">In Circulation</div>
-          </div>
-          <div>
-            <div className="stat-value" style={{ color: 'var(--kb-green)' }}>19</div>
-            <div className="stat-label">Local Businesses</div>
-          </div>
-          <div>
-            <div className="stat-value" style={{ color: 'var(--kb-gold)' }}>25%</div>
-            <div className="stat-label">Max Bonus Rate</div>
-          </div>
-          <div>
-            <div className="stat-value" style={{ color: 'var(--kb-navy)' }}>100%</div>
-            <div className="stat-label">Local Impact</div>
-          </div>
-        </div>
-      </section>
-
       {/* How It Works */}
       <section style={{ padding: '4rem 1rem', background: 'var(--kb-cream)' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
@@ -117,25 +111,25 @@ function Home() {
                 step: '1',
                 title: 'Exchange',
                 description: 'Convert USD to Kinderbucks at participating locations or online. Members get bonus rates!',
-                icon: '💵',
+                Icon: ArrowRightLeft,
               },
               {
                 step: '2',
                 title: 'Spend Local',
                 description: 'Use Kinderbucks at any of our 19+ participating village businesses.',
-                icon: '🏪',
+                Icon: Store,
               },
               {
                 step: '3',
                 title: 'Check In',
                 description: 'Scan QR codes when you visit to build your Kinderhooker status and unlock rewards.',
-                icon: '📱',
+                Icon: QrCode,
               },
               {
                 step: '4',
                 title: 'Earn More',
                 description: 'Higher tiers mean better exchange rates. Village Patrons get 25% bonus!',
-                icon: '⭐',
+                Icon: TrendingUp,
               },
             ].map((item, i) => (
               <motion.div
@@ -156,9 +150,8 @@ function Home() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   margin: '0 auto 1rem',
-                  fontSize: '1.5rem',
                 }}>
-                  {item.icon}
+                  <item.Icon size={28} color="var(--kb-gold)" strokeWidth={1.5} />
                 </div>
                 <div style={{
                   color: 'var(--kb-gold)',
@@ -193,10 +186,10 @@ function Home() {
             gap: '1.5rem',
           }}>
             {[
-              { name: 'Curious', businesses: '1+', bonus: '10%', color: '#888888', emoji: '🎣' },
-              { name: 'Hooked', businesses: '5+', bonus: '15%', color: '#2e7d32', emoji: '🎣' },
-              { name: 'Line & Sinker', businesses: '10+', bonus: '20%', color: '#1565c0', emoji: '🎣' },
-              { name: 'Village Patron', businesses: '15+', bonus: '25%', color: '#c9a227', emoji: '👑', featured: true },
+              { name: 'Curious', businesses: '1+', bonus: '10%', color: '#888888', Icon: Target },
+              { name: 'Hooked', businesses: '5+', bonus: '15%', color: '#2e7d32', Icon: Star },
+              { name: 'Line & Sinker', businesses: '10+', bonus: '20%', color: '#1565c0', Icon: Award },
+              { name: 'Village Patron', businesses: '15+', bonus: '25%', color: '#c9a227', Icon: Crown, featured: true },
             ].map((tier, i) => (
               <motion.div
                 key={i}
@@ -227,7 +220,18 @@ function Home() {
                     BEST
                   </div>
                 )}
-                <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>{tier.emoji}</div>
+                <div style={{
+                  width: '50px',
+                  height: '50px',
+                  background: `${tier.color}15`,
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  margin: '0 auto 0.75rem',
+                }}>
+                  <tier.Icon size={24} color={tier.color} strokeWidth={1.5} />
+                </div>
                 <h3 style={{ color: tier.color, marginBottom: '0.5rem' }}>{tier.name}</h3>
                 <div style={{ color: 'var(--kb-gray-500)', fontSize: '0.9rem', marginBottom: '1rem' }}>
                   {tier.businesses} businesses visited
