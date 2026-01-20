@@ -21,8 +21,6 @@ const SEED_BUSINESSES = [
   { code: "OLD-DUTCH", name: "Old Dutch Inn", category: "services" },
   { code: "MUSE", name: "Muse Aesthetics", category: "services" },
   { code: "PILATES", name: "Julia Jayne Pilates", category: "services" },
-  { code: "SIENA", name: "Siena Private Wealth", category: "services" },
-  { code: "COMMUNITY-BANK", name: "Community Bank NA", category: "services" },
   { code: "HISTORICAL", name: "Columbia County Historical Society", category: "arts" }
 ]
 
