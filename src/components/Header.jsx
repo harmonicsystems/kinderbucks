@@ -7,6 +7,7 @@ function Header() {
 
   const navLinks = [
     { to: '/', label: 'Home' },
+    { to: '/demo', label: 'See Demo' },
     { to: '/about', label: 'How It Works' },
     { to: '/benefits', label: 'Benefits' },
     { to: '/businesses', label: 'For Businesses' },

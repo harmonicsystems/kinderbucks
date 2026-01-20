@@ -1,5 +1,6 @@
 import { HashRouter, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
+import Demo from './pages/Demo'
 import About from './pages/About'
 import Benefits from './pages/Benefits'
 import Businesses from './pages/Businesses'
@@ -20,6 +21,7 @@ function App() {
       <Routes>
         {/* Public Pages */}
         <Route path="/" element={<Home />} />
+        <Route path="/demo" element={<Demo />} />
         <Route path="/about" element={<About />} />
         <Route path="/benefits" element={<Benefits />} />
         <Route path="/businesses" element={<Businesses />} />

@@ -59,8 +59,8 @@ function Home() {
             <Link to="/exchange" className="btn btn-gold" style={{ padding: '1rem 2rem', fontSize: '1.1rem' }}>
               Get Kinderbucks
             </Link>
-            <Link to="/about" className="btn btn-outline" style={{ padding: '1rem 2rem', fontSize: '1.1rem', borderColor: 'var(--kb-white)', color: 'var(--kb-white)' }}>
-              Learn How It Works
+            <Link to="/demo" className="btn btn-outline" style={{ padding: '1rem 2rem', fontSize: '1.1rem', borderColor: 'var(--kb-white)', color: 'var(--kb-white)' }}>
+              See Demo
             </Link>
           </div>
         </motion.div>
