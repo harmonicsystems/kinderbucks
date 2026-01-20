@@ -8,11 +8,14 @@ import {
   increment,
   serverTimestamp,
   query,
-  orderBy
+  orderBy,
+  where
 } from 'firebase/firestore'
 import { db } from './config'
 
 const COLLECTION = 'businesses'
+const CHECKINS_COLLECTION = 'checkins'
+const TRANSACTIONS_COLLECTION = 'transactions'
 
 /**
  * Get a single business by code
@@ -27,26 +30,154 @@ export async function getBusiness(code) {
 }
 
 /**
- * Get all businesses
+ * Get all businesses (excludes soft-deleted by default)
+ * @param {boolean} includeDeleted - Include soft-deleted businesses
  */
-export async function getAllBusinesses() {
+export async function getAllBusinesses(includeDeleted = false) {
   const q = query(collection(db, COLLECTION), orderBy('name'))
   const snapshot = await getDocs(q)
-  return snapshot.docs.map(doc => ({ code: doc.id, ...doc.data() }))
+  const businesses = snapshot.docs.map(doc => ({ code: doc.id, ...doc.data() }))
+
+  if (includeDeleted) {
+    return businesses
+  }
+  return businesses.filter(b => !b.isDeleted)
+}
+
+/**
+ * Get only soft-deleted businesses (for admin restore UI)
+ */
+export async function getDeletedBusinesses() {
+  const all = await getAllBusinesses(true)
+  return all.filter(b => b.isDeleted)
 }
 
 /**
  * Create a new business
+ * @param {string} code - Unique business code
+ * @param {string} name - Business name
+ * @param {string} category - Category (food, retail, services, arts)
+ * @param {object} extras - Optional extra fields (address, placeId, phone, website)
  */
-export async function createBusiness(code, name, category) {
-  await setDoc(doc(db, COLLECTION, code), {
+export async function createBusiness(code, name, category, extras = {}) {
+  const data = {
     code,
     name,
     category,
     isActive: true,
     checkinCount: 0,
     createdAt: serverTimestamp()
+  }
+
+  // Add optional fields if provided
+  if (extras.address) data.address = extras.address
+  if (extras.placeId) data.placeId = extras.placeId
+  if (extras.phone) data.phone = extras.phone
+  if (extras.website) data.website = extras.website
+  if (extras.photoUrl) data.photoUrl = extras.photoUrl
+
+  await setDoc(doc(db, COLLECTION, code), data)
+}
+
+/**
+ * Check if a business has any associated data that should prevent deletion
+ * Returns an object with counts and whether deletion is safe
+ */
+export async function getBusinessDeletionInfo(code) {
+  const business = await getBusiness(code)
+  if (!business) {
+    return { exists: false, canDelete: false, reason: 'Business not found' }
+  }
+
+  // Check check-ins
+  const checkinsQuery = query(
+    collection(db, CHECKINS_COLLECTION),
+    where('businessCode', '==', code)
+  )
+  const checkinsSnap = await getDocs(checkinsQuery)
+  const checkinCount = checkinsSnap.size
+
+  // Check transactions
+  const txnQuery = query(
+    collection(db, TRANSACTIONS_COLLECTION),
+    where('businessCode', '==', code)
+  )
+  const txnSnap = await getDocs(txnQuery)
+  const transactionCount = txnSnap.size
+
+  // Check balance
+  const balance = business.kinderbucksBalance || 0
+
+  const hasData = checkinCount > 0 || transactionCount > 0 || balance > 0
+
+  return {
+    exists: true,
+    code,
+    name: business.name,
+    checkinCount,
+    transactionCount,
+    balance,
+    hasData,
+    canSafeDelete: !hasData,
+    reason: hasData
+      ? `Has ${checkinCount} check-ins, ${transactionCount} transactions, $${balance} balance`
+      : 'No associated data'
+  }
+}
+
+/**
+ * Soft delete a business (marks as deleted, doesn't remove data)
+ * @param {string} code - Business code
+ * @param {string} deletedBy - UID of user performing deletion
+ * @param {boolean} force - Force delete even if business has data (still soft delete)
+ */
+export async function deleteBusiness(code, deletedBy = null, force = false) {
+  const info = await getBusinessDeletionInfo(code)
+
+  if (!info.exists) {
+    throw new Error('Business not found')
+  }
+
+  if (info.hasData && !force) {
+    throw new Error(`Cannot delete: ${info.reason}. Use force=true to soft delete anyway.`)
+  }
+
+  const docRef = doc(db, COLLECTION, code)
+  await updateDoc(docRef, {
+    isDeleted: true,
+    deletedAt: serverTimestamp(),
+    deletedBy: deletedBy,
+    isActive: false // Also deactivate
   })
+
+  return { success: true, wasForced: info.hasData && force }
+}
+
+/**
+ * Restore a soft-deleted business
+ */
+export async function restoreBusiness(code) {
+  const docRef = doc(db, COLLECTION, code)
+  await updateDoc(docRef, {
+    isDeleted: false,
+    deletedAt: null,
+    deletedBy: null,
+    restoredAt: serverTimestamp()
+  })
+}
+
+/**
+ * Permanently delete a business (use with caution - only for businesses with no data)
+ */
+export async function permanentlyDeleteBusiness(code) {
+  const info = await getBusinessDeletionInfo(code)
+
+  if (info.hasData) {
+    throw new Error(`Cannot permanently delete: ${info.reason}`)
+  }
+
+  const { deleteDoc: firebaseDeleteDoc } = await import('firebase/firestore')
+  await firebaseDeleteDoc(doc(db, COLLECTION, code))
 }
 
 /**
@@ -81,4 +212,86 @@ export async function updateBusinessDetails(code, details) {
 export async function getActiveBusinessesWithLocations() {
   const businesses = await getAllBusinesses()
   return businesses.filter(b => b.isActive && b.location)
+}
+
+/**
+ * Get business with KB balance fields
+ * Returns business with kinderbucksBalance, lifetimeAccepted, lifetimeRedeemed
+ */
+export async function getBusinessWithBalance(code) {
+  const business = await getBusiness(code)
+  if (!business) return null
+
+  return {
+    ...business,
+    kinderbucksBalance: business.kinderbucksBalance || 0,
+    lifetimeAccepted: business.lifetimeAccepted || 0,
+    lifetimeRedeemed: business.lifetimeRedeemed || 0
+  }
+}
+
+/**
+ * Initialize KB balance fields for a business (if not already set)
+ */
+export async function initializeBusinessKBFields(code) {
+  const docRef = doc(db, COLLECTION, code)
+  const docSnap = await getDoc(docRef)
+
+  if (docSnap.exists()) {
+    const data = docSnap.data()
+    if (data.kinderbucksBalance === undefined) {
+      await updateDoc(docRef, {
+        kinderbucksBalance: 0,
+        lifetimeAccepted: 0,
+        lifetimeRedeemed: 0
+      })
+    }
+  }
+}
+
+/**
+ * Update business photo URL
+ */
+export async function updateBusinessPhoto(code, photoUrl) {
+  const docRef = doc(db, COLLECTION, code)
+  await updateDoc(docRef, {
+    photoUrl,
+    photoUpdatedAt: serverTimestamp()
+  })
+}
+
+// ==================== LOYALTY REWARDS ====================
+
+/**
+ * Loyalty reward tier schema:
+ * {
+ *   checkinsRequired: number,
+ *   reward: string (description),
+ *   rewardType: 'discount' | 'freeItem' | 'credit',
+ *   rewardValue: number (percentage for discount, or item value)
+ * }
+ */
+
+/**
+ * Update business loyalty rewards configuration
+ */
+export async function updateBusinessLoyaltyRewards(code, rewards) {
+  const docRef = doc(db, COLLECTION, code)
+  await updateDoc(docRef, {
+    loyaltyRewards: rewards,
+    loyaltyUpdatedAt: serverTimestamp()
+  })
+}
+
+/**
+ * Get business with loyalty rewards
+ */
+export async function getBusinessWithRewards(code) {
+  const business = await getBusiness(code)
+  if (!business) return null
+
+  return {
+    ...business,
+    loyaltyRewards: business.loyaltyRewards || []
+  }
 }

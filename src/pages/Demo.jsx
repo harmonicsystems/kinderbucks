@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
+import { ShoppingBag, Store, Building2 } from 'lucide-react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 
@@ -9,7 +10,7 @@ const AUDIENCES = {
     id: 'customer',
     title: 'For Customers',
     subtitle: 'Start supporting local in minutes',
-    icon: '🛍️',
+    Icon: ShoppingBag,
     color: 'var(--kb-green)',
     minCommitment: 'Start with just $10',
   },
@@ -17,7 +18,7 @@ const AUDIENCES = {
     id: 'business',
     title: 'For Business Owners',
     subtitle: 'Accept Kinderbucks and grow your customer base',
-    icon: '🏪',
+    Icon: Store,
     color: 'var(--kb-navy)',
     minCommitment: 'No upfront cost to join',
   },
@@ -25,8 +26,8 @@ const AUDIENCES = {
     id: 'association',
     title: 'For the Business Association',
     subtitle: 'Strengthen the village economy together',
-    icon: '🏛️',
-    color: 'var(--kb-gold)',
+    Icon: Building2,
+    color: 'var(--kb-gold-dark)',
     minCommitment: 'Community-driven program',
   },
 }
@@ -494,51 +495,54 @@ function Demo() {
             gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
             gap: '1rem',
           }}>
-            {Object.values(AUDIENCES).map((aud) => (
-              <motion.button
-                key={aud.id}
-                onClick={() => setActiveAudience(aud.id)}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                style={{
-                  background: activeAudience === aud.id
-                    ? `linear-gradient(135deg, ${aud.color} 0%, ${aud.color}dd 100%)`
-                    : 'var(--kb-cream)',
-                  color: activeAudience === aud.id ? 'var(--kb-white)' : 'var(--kb-gray-700)',
-                  border: activeAudience === aud.id ? 'none' : '2px solid var(--kb-gray-200)',
-                  borderRadius: '12px',
-                  padding: '1.5rem',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                  transition: 'all 0.2s',
-                }}
-              >
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.75rem',
-                  marginBottom: '0.5rem',
-                }}>
-                  <span style={{ fontSize: '1.5rem' }}>{aud.icon}</span>
-                  <span style={{ fontWeight: '600', fontSize: '1.1rem' }}>{aud.title}</span>
-                </div>
-                <p style={{
-                  margin: 0,
-                  fontSize: '0.9rem',
-                  opacity: 0.85,
-                }}>
-                  {aud.subtitle}
-                </p>
-                <div style={{
-                  marginTop: '0.75rem',
-                  fontSize: '0.8rem',
-                  fontWeight: '600',
-                  opacity: activeAudience === aud.id ? 1 : 0.7,
-                }}>
-                  {aud.minCommitment}
-                </div>
-              </motion.button>
-            ))}
+            {Object.values(AUDIENCES).map((aud) => {
+              const AudIcon = aud.Icon
+              return (
+                <motion.button
+                  key={aud.id}
+                  onClick={() => setActiveAudience(aud.id)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  style={{
+                    background: activeAudience === aud.id
+                      ? `linear-gradient(135deg, ${aud.color} 0%, ${aud.color}dd 100%)`
+                      : 'var(--kb-cream)',
+                    color: activeAudience === aud.id ? 'var(--kb-white)' : 'var(--kb-gray-700)',
+                    border: activeAudience === aud.id ? 'none' : '2px solid var(--kb-gray-200)',
+                    borderRadius: '12px',
+                    padding: '1.5rem',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.75rem',
+                    marginBottom: '0.5rem',
+                  }}>
+                    <AudIcon size={28} strokeWidth={1.5} />
+                    <span style={{ fontWeight: '600', fontSize: '1.1rem' }}>{aud.title}</span>
+                  </div>
+                  <p style={{
+                    margin: 0,
+                    fontSize: '0.9rem',
+                    opacity: 0.85,
+                  }}>
+                    {aud.subtitle}
+                  </p>
+                  <div style={{
+                    marginTop: '0.75rem',
+                    fontSize: '0.8rem',
+                    fontWeight: '600',
+                    opacity: activeAudience === aud.id ? 1 : 0.7,
+                  }}>
+                    {aud.minCommitment}
+                  </div>
+                </motion.button>
+              )
+            })}
           </div>
         </div>
       </section>
@@ -659,9 +663,10 @@ function Demo() {
       <Footer />
 
       <style>{`
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
           .demo-flow-grid {
             grid-template-columns: 1fr !important;
+            gap: 1.5rem !important;
           }
         }
       `}</style>

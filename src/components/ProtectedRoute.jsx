@@ -3,7 +3,7 @@ import { Loader2 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 
 function ProtectedRoute({ children, allowedRoles = [] }) {
-  const { user, profile, loading, isAuthenticated } = useAuth()
+  const { user, roles, loading, isAuthenticated } = useAuth()
   const location = useLocation()
 
   // Show loading spinner while checking auth
@@ -39,9 +39,11 @@ function ProtectedRoute({ children, allowedRoles = [] }) {
     return <Navigate to="/login" state={{ from: location }} replace />
   }
 
-  // Check role if specified
-  if (allowedRoles.length > 0 && profile) {
-    if (!allowedRoles.includes(profile.role)) {
+  // Check role if specified - user must have at least one of the allowed roles
+  if (allowedRoles.length > 0) {
+    const hasAllowedRole = allowedRoles.some(allowedRole => roles.includes(allowedRole))
+
+    if (!hasAllowedRole) {
       // User doesn't have required role - redirect to home or unauthorized page
       return (
         <div style={{

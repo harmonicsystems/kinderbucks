@@ -22,6 +22,8 @@ import AdminExchanges from './pages/AdminExchanges'
 import AdminMembers from './pages/AdminMembers'
 import AdminUsers from './pages/AdminUsers'
 import AdminBusinessDetail from './pages/AdminBusinessDetail'
+import AdminRedemptions from './pages/AdminRedemptions'
+import AcceptPayment from './pages/AcceptPayment'
 import VillageMapPage from './pages/VillageMap'
 import './App.css'
 
@@ -53,6 +55,11 @@ function App() {
           <Route path="/business/dashboard" element={
             <ProtectedRoute allowedRoles={['business', 'admin']}>
               <BusinessDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/business/accept-payment" element={
+            <ProtectedRoute allowedRoles={['business', 'admin']}>
+              <AcceptPayment />
             </ProtectedRoute>
           } />
 
@@ -95,6 +102,11 @@ function App() {
           <Route path="/admin/users" element={
             <ProtectedRoute allowedRoles={['admin']}>
               <AdminUsers />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/redemptions" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminRedemptions />
             </ProtectedRoute>
           } />
         </Routes>

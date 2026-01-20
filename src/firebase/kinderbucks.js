@@ -85,3 +85,32 @@ export async function recordScan(serial) {
     userAgent: navigator.userAgent || null,
   })
 }
+
+/**
+ * Validate a Kinderbuck for payment acceptance
+ * Returns { valid: true, kb } or { valid: false, error }
+ */
+export async function validateForPayment(serial) {
+  const kb = await getKinderbuck(serial)
+
+  if (!kb) {
+    return { valid: false, error: 'Kinderbuck not found' }
+  }
+
+  if (kb.status !== 'active') {
+    return { valid: false, error: `Kinderbuck status is "${kb.status}" - must be "active"` }
+  }
+
+  if (kb.currentHolder && kb.holderType === 'business') {
+    return { valid: false, error: 'Kinderbuck is already held by a business' }
+  }
+
+  return { valid: true, kb }
+}
+
+/**
+ * Get Kinderbuck with full holder information
+ */
+export async function getKinderbuckWithHolder(serial) {
+  return getKinderbuck(serial)
+}

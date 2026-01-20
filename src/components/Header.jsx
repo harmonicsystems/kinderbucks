@@ -13,7 +13,7 @@ function Header() {
 
   const navLinks = [
     { to: '/', label: 'Home' },
-    { to: '/map', label: 'Village Map' },
+    { to: '/map', label: 'Directory' },
     { to: '/demo', label: 'See Demo' },
     { to: '/about', label: 'How It Works' },
     { to: '/businesses', label: 'For Businesses' },

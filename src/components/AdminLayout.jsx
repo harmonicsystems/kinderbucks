@@ -9,7 +9,8 @@ import {
   Home,
   Settings,
   LogOut,
-  Shield
+  Shield,
+  Banknote
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { logOut } from '../firebase/auth'
@@ -22,6 +23,7 @@ function AdminLayout({ children, title }) {
   const navItems = [
     { to: '/admin/dashboard', label: 'Dashboard', Icon: LayoutDashboard },
     { to: '/admin/exchanges', label: 'Exchanges', Icon: ArrowRightLeft },
+    { to: '/admin/redemptions', label: 'Redemptions', Icon: Banknote },
     { to: '/admin/members', label: 'Members', Icon: Users },
     { to: '/admin/generate', label: 'Generate QR', Icon: QrCode },
     { to: '/admin/issue', label: 'Issue Currency', Icon: Send },

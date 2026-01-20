@@ -102,3 +102,147 @@ export async function getCheckinsByBusiness(businessCode) {
     return []
   }
 }
+
+/**
+ * Get all check-ins (for village-wide trends)
+ */
+export async function getAllCheckins() {
+  try {
+    const snapshot = await getDocs(collection(db, COLLECTION))
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }))
+  } catch (err) {
+    console.error('getAllCheckins error:', err)
+    return []
+  }
+}
+
+// ==================== MEMBER CHECK-IN STATS ====================
+
+/**
+ * Get all check-ins for a specific member
+ */
+export async function getMemberCheckins(memberId) {
+  try {
+    // Try memberId field first
+    let q = query(
+      collection(db, COLLECTION),
+      where('memberId', '==', memberId)
+    )
+    let snapshot = await getDocs(q)
+
+    // Also check visitorId field (legacy)
+    if (snapshot.empty) {
+      q = query(
+        collection(db, COLLECTION),
+        where('visitorId', '==', memberId)
+      )
+      snapshot = await getDocs(q)
+    }
+
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }))
+  } catch (err) {
+    console.error('getMemberCheckins error:', err)
+    return []
+  }
+}
+
+/**
+ * Get member check-ins grouped by business
+ * Returns: { [businessCode]: { count, lastCheckin, business } }
+ */
+export async function getMemberCheckinsByBusiness(memberId, businesses) {
+  const checkins = await getMemberCheckins(memberId)
+
+  // Group by business
+  const grouped = {}
+  for (const checkin of checkins) {
+    const code = checkin.businessCode
+    if (!grouped[code]) {
+      grouped[code] = {
+        count: 0,
+        checkins: [],
+        business: businesses.find(b => b.code === code) || { code, name: code }
+      }
+    }
+    grouped[code].count++
+    grouped[code].checkins.push(checkin)
+  }
+
+  // Sort checkins within each group and get last checkin
+  for (const code of Object.keys(grouped)) {
+    grouped[code].checkins.sort((a, b) => {
+      const timeA = a.timestamp?.toDate?.() || new Date(0)
+      const timeB = b.timestamp?.toDate?.() || new Date(0)
+      return timeB - timeA
+    })
+    grouped[code].lastCheckin = grouped[code].checkins[0]?.timestamp
+  }
+
+  return grouped
+}
+
+/**
+ * Get member check-ins grouped by category
+ * Returns: { food: count, retail: count, services: count, arts: count }
+ */
+export async function getMemberCheckinsByCategory(memberId, businesses) {
+  const checkins = await getMemberCheckins(memberId)
+
+  // Create business code to category map
+  const categoryMap = {}
+  for (const biz of businesses) {
+    categoryMap[biz.code] = biz.category || 'services'
+  }
+
+  // Count by category
+  const counts = {
+    food: 0,
+    retail: 0,
+    services: 0,
+    arts: 0
+  }
+
+  for (const checkin of checkins) {
+    const category = categoryMap[checkin.businessCode] || 'services'
+    if (counts[category] !== undefined) {
+      counts[category]++
+    }
+  }
+
+  return counts
+}
+
+/**
+ * Get member's progress toward rewards at a specific business
+ */
+export function getRewardProgress(checkinCount, loyaltyRewards = []) {
+  if (!loyaltyRewards.length) return null
+
+  // Sort rewards by checkinsRequired
+  const sortedRewards = [...loyaltyRewards].sort((a, b) => a.checkinsRequired - b.checkinsRequired)
+
+  // Find current reward (highest achieved)
+  let currentReward = null
+  let nextReward = null
+
+  for (const reward of sortedRewards) {
+    if (checkinCount >= reward.checkinsRequired) {
+      currentReward = reward
+    } else if (!nextReward) {
+      nextReward = reward
+    }
+  }
+
+  return {
+    currentReward,
+    nextReward,
+    checkinsUntilNext: nextReward ? nextReward.checkinsRequired - checkinCount : 0,
+    progress: nextReward ? (checkinCount / nextReward.checkinsRequired) * 100 : 100
+  }
+}

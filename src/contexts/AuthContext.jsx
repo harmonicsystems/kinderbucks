@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
-import { onAuthChange, getUserProfile, ROLES } from '../firebase/auth'
+import { onAuthChange, getUserProfile, getUserRoles, hasRole as checkHasRole, ROLES } from '../firebase/auth'
 
 const AuthContext = createContext(null)
 
@@ -26,15 +26,23 @@ export function AuthProvider({ children }) {
     return () => unsubscribe()
   }, [])
 
-  // Helper functions
-  const isAuthenticated = !!user
-  const isAdmin = profile?.role === ROLES.ADMIN
-  const isBusiness = profile?.role === ROLES.BUSINESS
-  const isMember = profile?.role === ROLES.MEMBER
+  // Get user's roles as array
+  const roles = getUserRoles(profile)
 
-  const hasRole = (...roles) => {
-    if (!profile) return false
-    return roles.includes(profile.role)
+  // Helper functions - now check roles array
+  const isAuthenticated = !!user
+  const isAdmin = roles.includes(ROLES.ADMIN)
+  const isBusiness = roles.includes(ROLES.BUSINESS)
+  const isMember = roles.includes(ROLES.MEMBER) || isAuthenticated // All authenticated users are members
+
+  // Check if user has a specific role
+  const hasRole = (role) => {
+    return checkHasRole(profile, role)
+  }
+
+  // Check if user has any of the specified roles
+  const hasAnyRole = (...rolesToCheck) => {
+    return rolesToCheck.some(role => roles.includes(role))
   }
 
   // Refresh profile data
@@ -48,12 +56,14 @@ export function AuthProvider({ children }) {
   const value = {
     user,
     profile,
+    roles,
     loading,
     isAuthenticated,
     isAdmin,
     isBusiness,
     isMember,
     hasRole,
+    hasAnyRole,
     refreshProfile
   }
 

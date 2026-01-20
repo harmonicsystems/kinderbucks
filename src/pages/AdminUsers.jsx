@@ -5,14 +5,30 @@ import {
   Store,
   User,
   Search,
-  MoreVertical,
   Crown,
   Mail,
   Calendar,
-  CheckCircle
+  CheckCircle,
+  Plus,
+  Minus,
+  Trash2,
+  RotateCcw,
+  Archive,
+  AlertTriangle
 } from 'lucide-react'
 import AdminLayout from '../components/AdminLayout'
-import { getAllUsers, updateUserRole, assignBusinessToUser, ROLES } from '../firebase/auth'
+import {
+  getAllUsers,
+  addUserRole,
+  removeUserRole,
+  assignBusinessToUser,
+  getUserRoles,
+  ROLES,
+  getUserDeletionInfo,
+  softDeleteUser,
+  restoreUser,
+  getDeletedUsers
+} from '../firebase/auth'
 import { getAllBusinesses } from '../firebase/businesses'
 
 const ROLE_CONFIG = {
@@ -41,6 +57,7 @@ const ROLE_CONFIG = {
 
 function AdminUsers() {
   const [users, setUsers] = useState([])
+  const [deletedUsers, setDeletedUsers] = useState([])
   const [businesses, setBusinesses] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
@@ -48,13 +65,20 @@ function AdminUsers() {
   const [editingUser, setEditingUser] = useState(null)
   const [showAssignModal, setShowAssignModal] = useState(null)
   const [successMessage, setSuccessMessage] = useState('')
+  const [processing, setProcessing] = useState(null)
+  const [showDeleted, setShowDeleted] = useState(false)
+  const [deleteModal, setDeleteModal] = useState(null)
+  const [deleteConfirmText, setDeleteConfirmText] = useState('')
+  const [deleting, setDeleting] = useState(false)
 
   const loadData = async () => {
-    const [usersData, businessesData] = await Promise.all([
+    const [usersData, businessesData, deletedUsersData] = await Promise.all([
       getAllUsers(),
-      getAllBusinesses()
+      getAllBusinesses(),
+      getDeletedUsers()
     ])
-    setUsers(usersData)
+    setUsers(usersData.filter(u => !u.isDeleted))
+    setDeletedUsers(deletedUsersData)
     setBusinesses(businessesData)
     setLoading(false)
   }
@@ -63,17 +87,26 @@ function AdminUsers() {
     loadData()
   }, [])
 
-  const handleRoleChange = async (uid, newRole) => {
+  const handleToggleRole = async (uid, role) => {
+    setProcessing(`${uid}-${role}`)
     try {
-      await updateUserRole(uid, newRole)
+      const user = users.find(u => u.id === uid)
+      const userRoles = getUserRoles(user)
+
+      if (userRoles.includes(role)) {
+        await removeUserRole(uid, role)
+      } else {
+        await addUserRole(uid, role)
+      }
+
       setSuccessMessage('Role updated successfully')
       setTimeout(() => setSuccessMessage(''), 3000)
       await loadData()
-      setEditingUser(null)
     } catch (err) {
       console.error('Error updating role:', err)
       alert('Error updating role')
     }
+    setProcessing(null)
   }
 
   const handleAssignBusiness = async (uid, businessCode) => {
@@ -89,19 +122,59 @@ function AdminUsers() {
     }
   }
 
+  const handleDeleteClick = async (user) => {
+    const info = await getUserDeletionInfo(user.id)
+    setDeleteModal({ user, info })
+    setDeleteConfirmText('')
+  }
+
+  const handleConfirmDelete = async (force = false) => {
+    if (!deleteModal) return
+
+    setDeleting(true)
+    try {
+      await softDeleteUser(deleteModal.user.id, null, force)
+      setDeleteModal(null)
+      setDeleteConfirmText('')
+      setSuccessMessage('User deleted successfully')
+      setTimeout(() => setSuccessMessage(''), 3000)
+      await loadData()
+    } catch (err) {
+      console.error('Error deleting user:', err)
+      alert(err.message || 'Error deleting user')
+    }
+    setDeleting(false)
+  }
+
+  const handleRestore = async (uid) => {
+    try {
+      await restoreUser(uid)
+      setSuccessMessage('User restored successfully')
+      setTimeout(() => setSuccessMessage(''), 3000)
+      await loadData()
+    } catch (err) {
+      console.error('Error restoring user:', err)
+      alert('Error restoring user')
+    }
+  }
+
   const filteredUsers = users.filter(user => {
     const matchesSearch =
       user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.displayName?.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesRole = roleFilter === 'all' || user.role === roleFilter
-    return matchesSearch && matchesRole
+
+    if (roleFilter === 'all') return matchesSearch
+
+    const userRoles = getUserRoles(user)
+    return matchesSearch && userRoles.includes(roleFilter)
   })
 
+  // Stats now count users who have each role (not exclusive)
   const stats = {
     total: users.length,
-    admins: users.filter(u => u.role === 'admin').length,
-    businesses: users.filter(u => u.role === 'business').length,
-    members: users.filter(u => u.role === 'member').length,
+    admins: users.filter(u => getUserRoles(u).includes('admin')).length,
+    businesses: users.filter(u => getUserRoles(u).includes('business')).length,
+    members: users.filter(u => getUserRoles(u).includes('member')).length,
   }
 
   const formatDate = (timestamp) => {
@@ -166,7 +239,7 @@ function AdminUsers() {
           <div style={{ fontSize: '1.75rem', fontWeight: '700', color: '#2563eb' }}>
             {stats.businesses}
           </div>
-          <div style={{ fontSize: '0.85rem', color: 'var(--kb-gray-500)' }}>Businesses</div>
+          <div style={{ fontSize: '0.85rem', color: 'var(--kb-gray-500)' }}>Business Users</div>
         </div>
         <div className="card" style={{ padding: '1rem', textAlign: 'center' }}>
           <div style={{ fontSize: '1.75rem', fontWeight: '700', color: 'var(--kb-green)' }}>
@@ -207,9 +280,9 @@ function AdminUsers() {
             style={{ minWidth: '150px' }}
           >
             <option value="all">All Roles</option>
-            <option value="admin">Admins</option>
-            <option value="business">Businesses</option>
-            <option value="member">Members</option>
+            <option value="admin">Has Admin</option>
+            <option value="business">Has Business</option>
+            <option value="member">Has Member</option>
           </select>
         </div>
       </div>
@@ -228,8 +301,10 @@ function AdminUsers() {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {filteredUsers.map(user => {
-              const roleConfig = ROLE_CONFIG[user.role] || ROLE_CONFIG.member
-              const RoleIcon = roleConfig.Icon
+              const userRoles = getUserRoles(user)
+              const primaryRole = userRoles.includes('admin') ? 'admin' : userRoles.includes('business') ? 'business' : 'member'
+              const primaryConfig = ROLE_CONFIG[primaryRole]
+              const PrimaryIcon = primaryConfig.Icon
 
               return (
                 <div
@@ -243,7 +318,7 @@ function AdminUsers() {
                 >
                   <div style={{
                     display: 'flex',
-                    alignItems: 'center',
+                    alignItems: 'flex-start',
                     justifyContent: 'space-between',
                     flexWrap: 'wrap',
                     gap: '1rem',
@@ -253,13 +328,13 @@ function AdminUsers() {
                       <div style={{
                         width: '48px',
                         height: '48px',
-                        background: roleConfig.bgColor,
+                        background: primaryConfig.bgColor,
                         borderRadius: '50%',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                       }}>
-                        <RoleIcon size={24} color={roleConfig.color} />
+                        <PrimaryIcon size={24} color={primaryConfig.color} />
                       </div>
                       <div>
                         <div style={{
@@ -271,7 +346,7 @@ function AdminUsers() {
                           gap: '0.5rem',
                         }}>
                           {user.displayName || 'Unnamed User'}
-                          {user.role === 'admin' && (
+                          {userRoles.includes('admin') && (
                             <Crown size={16} color="#c9a227" />
                           )}
                         </div>
@@ -298,124 +373,203 @@ function AdminUsers() {
                             {user.businessCode}
                           </div>
                         )}
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.25rem',
+                          color: 'var(--kb-gray-400)',
+                          fontSize: '0.8rem',
+                          marginTop: '0.25rem',
+                        }}>
+                          <Calendar size={12} />
+                          Last login: {formatDate(user.lastLogin)}
+                        </div>
                       </div>
                     </div>
 
-                    {/* Actions */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      {/* Role Badge */}
-                      <div style={{
-                        padding: '0.4rem 0.8rem',
-                        background: roleConfig.bgColor,
-                        color: roleConfig.color,
-                        borderRadius: '6px',
-                        fontSize: '0.85rem',
-                        fontWeight: '600',
-                      }}>
-                        {roleConfig.label}
-                      </div>
-
-                      {/* Last Login */}
-                      <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.25rem',
-                        color: 'var(--kb-gray-500)',
-                        fontSize: '0.85rem',
-                      }}>
-                        <Calendar size={14} />
-                        {formatDate(user.lastLogin)}
-                      </div>
-
-                      {/* Edit Role Dropdown */}
-                      <div style={{ position: 'relative' }}>
-                        <button
-                          onClick={() => setEditingUser(editingUser === user.id ? null : user.id)}
-                          className="btn btn-secondary"
-                          style={{ padding: '0.5rem' }}
-                        >
-                          <MoreVertical size={18} />
-                        </button>
-
-                        {editingUser === user.id && (
-                          <div style={{
-                            position: 'absolute',
-                            right: 0,
-                            top: '100%',
-                            marginTop: '0.5rem',
-                            background: 'white',
-                            borderRadius: '8px',
-                            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                            zIndex: 100,
-                            minWidth: '180px',
-                            overflow: 'hidden',
-                          }}>
-                            <div style={{ padding: '0.75rem', borderBottom: '1px solid var(--kb-gray-200)' }}>
-                              <div style={{ fontSize: '0.8rem', color: 'var(--kb-gray-500)', marginBottom: '0.25rem' }}>
-                                Change Role
-                              </div>
+                    {/* Role Badges & Actions */}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.75rem' }}>
+                      {/* Current Roles */}
+                      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                        {userRoles.map(role => {
+                          const config = ROLE_CONFIG[role]
+                          if (!config) return null
+                          return (
+                            <div
+                              key={role}
+                              style={{
+                                padding: '0.35rem 0.75rem',
+                                background: config.bgColor,
+                                color: config.color,
+                                borderRadius: '6px',
+                                fontSize: '0.8rem',
+                                fontWeight: '600',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.35rem',
+                              }}
+                            >
+                              <config.Icon size={14} />
+                              {config.label}
                             </div>
-                            {Object.entries(ROLE_CONFIG).map(([role, config]) => (
-                              <button
-                                key={role}
-                                onClick={() => handleRoleChange(user.id, role)}
-                                style={{
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  gap: '0.5rem',
-                                  width: '100%',
-                                  padding: '0.75rem 1rem',
-                                  border: 'none',
-                                  background: user.role === role ? config.bgColor : 'transparent',
-                                  color: 'var(--kb-gray-700)',
-                                  cursor: 'pointer',
-                                  textAlign: 'left',
-                                }}
-                              >
-                                <config.Icon size={16} color={config.color} />
-                                {config.label}
-                                {user.role === role && (
-                                  <CheckCircle size={14} color={config.color} style={{ marginLeft: 'auto' }} />
-                                )}
-                              </button>
-                            ))}
-                            {user.role === 'business' && (
-                              <>
-                                <div style={{ borderTop: '1px solid var(--kb-gray-200)' }} />
-                                <button
-                                  onClick={() => {
-                                    setEditingUser(null)
-                                    setShowAssignModal(user.id)
-                                  }}
-                                  style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.5rem',
-                                    width: '100%',
-                                    padding: '0.75rem 1rem',
-                                    border: 'none',
-                                    background: 'transparent',
-                                    color: '#2563eb',
-                                    cursor: 'pointer',
-                                    textAlign: 'left',
-                                  }}
-                                >
-                                  <Store size={16} />
-                                  Assign Business
-                                </button>
-                              </>
-                            )}
-                          </div>
-                        )}
+                          )
+                        })}
                       </div>
+
+                      {/* Edit Roles Button */}
+                      <button
+                        onClick={() => setEditingUser(editingUser === user.id ? null : user.id)}
+                        className="btn btn-secondary"
+                        style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem' }}
+                      >
+                        {editingUser === user.id ? 'Done' : 'Edit Roles'}
+                      </button>
                     </div>
                   </div>
+
+                  {/* Expanded Role Editor */}
+                  {editingUser === user.id && (
+                    <div style={{
+                      marginTop: '1rem',
+                      paddingTop: '1rem',
+                      borderTop: '1px solid var(--kb-gray-200)',
+                    }}>
+                      <div style={{ fontSize: '0.85rem', color: 'var(--kb-gray-500)', marginBottom: '0.75rem' }}>
+                        Toggle roles for this user:
+                      </div>
+                      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+                        {Object.entries(ROLE_CONFIG).map(([role, config]) => {
+                          const hasThisRole = userRoles.includes(role)
+                          const isProcessing = processing === `${user.id}-${role}`
+
+                          return (
+                            <button
+                              key={role}
+                              onClick={() => handleToggleRole(user.id, role)}
+                              disabled={isProcessing}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                padding: '0.5rem 1rem',
+                                borderRadius: '8px',
+                                border: `2px solid ${hasThisRole ? config.color : 'var(--kb-gray-300)'}`,
+                                background: hasThisRole ? config.bgColor : 'white',
+                                color: hasThisRole ? config.color : 'var(--kb-gray-500)',
+                                cursor: isProcessing ? 'wait' : 'pointer',
+                                fontWeight: '500',
+                                fontSize: '0.9rem',
+                                opacity: isProcessing ? 0.6 : 1,
+                              }}
+                            >
+                              {hasThisRole ? <Minus size={16} /> : <Plus size={16} />}
+                              <config.Icon size={16} />
+                              {config.label}
+                            </button>
+                          )
+                        })}
+                      </div>
+
+                      {/* Assign Business Button - show if user has business role */}
+                      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                        {userRoles.includes('business') && (
+                          <button
+                            onClick={() => setShowAssignModal(user.id)}
+                            className="btn btn-secondary"
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '0.5rem',
+                              fontSize: '0.85rem',
+                            }}
+                          >
+                            <Store size={16} />
+                            {user.businessCode ? `Change Business (${user.businessCode})` : 'Assign Business'}
+                          </button>
+                        )}
+                        <button
+                          onClick={() => handleDeleteClick(user)}
+                          className="btn"
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            fontSize: '0.85rem',
+                            background: 'var(--kb-gray-100)',
+                            color: 'var(--kb-gray-600)',
+                          }}
+                        >
+                          <Trash2 size={16} />
+                          Delete User
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )
             })}
           </div>
         )}
       </div>
+
+      {/* Deleted Users Section */}
+      {deletedUsers.length > 0 && (
+        <div className="card" style={{ marginTop: '2rem' }}>
+          <button
+            onClick={() => setShowDeleted(!showDeleted)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              width: '100%',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0,
+            }}
+          >
+            <h3 style={{ color: 'var(--kb-gray-500)', display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0 }}>
+              <Archive size={20} /> Deleted Users ({deletedUsers.length})
+            </h3>
+            <span style={{ color: 'var(--kb-gray-400)' }}>{showDeleted ? '▲' : '▼'}</span>
+          </button>
+
+          {showDeleted && (
+            <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {deletedUsers.map(user => (
+                <div
+                  key={user.id}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '1rem',
+                    background: 'var(--kb-gray-50)',
+                    borderRadius: '8px',
+                    opacity: 0.7,
+                  }}
+                >
+                  <div>
+                    <div style={{ fontWeight: '500', color: 'var(--kb-gray-600)' }}>
+                      {user.displayName || 'Unnamed User'}
+                    </div>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--kb-gray-400)' }}>
+                      {user.email} • Deleted {user.deletedAt?.toDate ? user.deletedAt.toDate().toLocaleDateString() : 'recently'}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleRestore(user.id)}
+                    className="btn btn-secondary"
+                    style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                  >
+                    <RotateCcw size={16} /> Restore
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Assign Business Modal */}
       {showAssignModal && (
@@ -476,6 +630,119 @@ function AdminUsers() {
             >
               Cancel
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Delete User Confirmation Modal */}
+      {deleteModal && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '1rem',
+        }}>
+          <div className="card" style={{ maxWidth: '500px', width: '100%', padding: '2rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
+              <div style={{
+                width: '48px',
+                height: '48px',
+                background: deleteModal.info?.hasData ? 'rgba(231, 76, 60, 0.1)' : 'rgba(39, 174, 96, 0.1)',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                {deleteModal.info?.hasData ? (
+                  <AlertTriangle size={24} color="#e74c3c" />
+                ) : (
+                  <Trash2 size={24} color="var(--kb-green)" />
+                )}
+              </div>
+              <div>
+                <h3 style={{ color: 'var(--kb-navy)', margin: 0 }}>
+                  Delete {deleteModal.user.displayName || deleteModal.user.email}?
+                </h3>
+                <p style={{ color: 'var(--kb-gray-500)', margin: 0, fontSize: '0.9rem' }}>
+                  {deleteModal.info?.hasData ? 'This user has associated data' : 'This user can be safely deleted'}
+                </p>
+              </div>
+            </div>
+
+            {deleteModal.info?.hasData && (
+              <div style={{
+                background: 'rgba(231, 76, 60, 0.05)',
+                border: '1px solid rgba(231, 76, 60, 0.2)',
+                borderRadius: '8px',
+                padding: '1rem',
+                marginBottom: '1.5rem',
+              }}>
+                <div style={{ fontWeight: '600', color: '#c0392b', marginBottom: '0.5rem' }}>
+                  Associated Data Found:
+                </div>
+                <ul style={{ margin: 0, paddingLeft: '1.25rem', color: 'var(--kb-gray-600)' }}>
+                  {deleteModal.info.checkinCount > 0 && (
+                    <li>{deleteModal.info.checkinCount} check-ins recorded</li>
+                  )}
+                  {deleteModal.info.exchangeCount > 0 && (
+                    <li>{deleteModal.info.exchangeCount} exchange requests</li>
+                  )}
+                  {deleteModal.info.isBusinessOwner && (
+                    <li>Business owner: {deleteModal.info.businessCode}</li>
+                  )}
+                </ul>
+                <p style={{ margin: '0.75rem 0 0 0', fontSize: '0.85rem', color: 'var(--kb-gray-500)' }}>
+                  The user will be soft-deleted and can be restored later.
+                </p>
+              </div>
+            )}
+
+            {deleteModal.info?.hasData && (
+              <div style={{ marginBottom: '1.5rem' }}>
+                <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--kb-gray-600)', fontWeight: '500' }}>
+                  Type "{deleteModal.user.email}" to confirm:
+                </label>
+                <input
+                  type="text"
+                  value={deleteConfirmText}
+                  onChange={e => setDeleteConfirmText(e.target.value)}
+                  placeholder={deleteModal.user.email}
+                  style={{ width: '100%' }}
+                />
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => { setDeleteModal(null); setDeleteConfirmText(''); }}
+                className="btn btn-secondary"
+              >
+                Cancel
+              </button>
+              {deleteModal.info?.hasData ? (
+                <button
+                  onClick={() => handleConfirmDelete(true)}
+                  className="btn"
+                  style={{ background: '#e74c3c', color: 'white' }}
+                  disabled={deleteConfirmText !== deleteModal.user.email || deleting}
+                >
+                  {deleting ? 'Deleting...' : 'Delete Anyway'}
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleConfirmDelete(false)}
+                  className="btn"
+                  style={{ background: '#e74c3c', color: 'white' }}
+                  disabled={deleting}
+                >
+                  {deleting ? 'Deleting...' : 'Delete'}
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}
