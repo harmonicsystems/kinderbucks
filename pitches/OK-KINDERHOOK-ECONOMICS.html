@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OK Kinderhook - The Economics of Loyalty</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --green-darkest: #1a3a1a;
+      --green-dark: #2B5F2F;
+      --green: #4aa64a;
+      --green-light: #90EE90;
+      --red: #c62828;
+      --red-light: #fff5f5;
+      --green-bg: #f0f7f0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: linear-gradient(135deg, #1a3a1a 0%, #2d5a2d 100%);
+      min-height: 100vh;
+      padding: 1rem;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+    }
+
+    /* Print - B&W */
+    @media print {
+      body { background: white; padding: 0; }
+      .page { box-shadow: none; border-radius: 0; padding: 0.5in; }
+      .key-insight, .bottom-line { background: #333 !important; }
+      .key-insight .highlight, .bottom-line strong { color: #ccc !important; }
+      .scenario.winner { background: #f5f5f5 !important; border-color: #333 !important; }
+      .leakage-box.problem { background: #f9f9f9 !important; border-color: #666 !important; }
+      .leakage-box.solution { background: #f5f5f5 !important; border-color: #333 !important; }
+      .leakage-box.problem h3, .leakage-box.problem .stat { color: #333 !important; }
+      .leakage-box.solution h3, .leakage-box.solution .stat { color: #000 !important; }
+      .principle { border-top-color: #333 !important; }
+      h1, h2, .principle h3, .example h4 { color: #000 !important; }
+      .icon svg { stroke: #333 !important; }
+    }
+
+    header {
+      margin-bottom: 1.25rem;
+      padding-bottom: 1rem;
+      border-bottom: 3px solid var(--green-darkest);
+    }
+
+    h1 {
+      font-size: clamp(1.5rem, 5vw, 1.75rem);
+      color: var(--green-darkest);
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      font-size: clamp(0.875rem, 2.5vw, 1rem);
+      color: #666;
+    }
+
+    .key-insight {
+      background: var(--green-darkest);
+      color: white;
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      text-align: center;
+    }
+
+    .key-insight p {
+      font-size: clamp(0.95rem, 3vw, 1.125rem);
+      font-weight: 600;
+      line-height: 1.5;
+    }
+
+    .key-insight .highlight {
+      color: var(--green-light);
+    }
+
+    h2 {
+      font-size: clamp(0.95rem, 3vw, 1rem);
+      color: var(--green-darkest);
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #ddd;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    h2 .icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    h2 .icon svg {
+      width: 100%;
+      height: 100%;
+      stroke: var(--green-dark);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .math-section {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1.25rem;
+      border-left: 4px solid var(--green-darkest);
+    }
+
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    @media (min-width: 600px) {
+      .comparison {
+        grid-template-columns: 1fr auto 1fr;
+        align-items: start;
+      }
+    }
+
+    .scenario {
+      background: white;
+      border-radius: 8px;
+      padding: 1rem;
+      border: 2px solid #ddd;
+    }
+
+    .scenario.winner {
+      border-color: var(--green-dark);
+      background: var(--green-bg);
+    }
+
+    .scenario h3 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 0.75rem;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .scenario.winner h3 {
+      color: var(--green-darkest);
+    }
+
+    .scenario h3 .icon {
+      width: 18px;
+      height: 18px;
+    }
+
+    .scenario h3 .icon svg {
+      width: 100%;
+      height: 100%;
+      stroke-width: 2.5;
+      fill: none;
+    }
+
+    .scenario h3 .icon.x svg { stroke: var(--red); }
+    .scenario.winner h3 .icon svg { stroke: var(--green-dark); }
+
+    .calc-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      padding: 0.35rem 0;
+      border-bottom: 1px dotted #ddd;
+    }
+
+    .calc-row:last-child {
+      border-bottom: none;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding-top: 0.6rem;
+      margin-top: 0.35rem;
+      border-top: 2px solid #333;
+    }
+
+    .scenario.winner .calc-row:last-child {
+      color: var(--green-darkest);
+    }
+
+    .vs {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #999;
+    }
+
+    @media (min-width: 600px) {
+      .vs { display: flex; }
+    }
+
+    .math-note {
+      font-size: 0.8rem;
+      color: #666;
+      text-align: center;
+      margin-top: 0.75rem;
+      font-style: italic;
+    }
+
+    .math-note strong {
+      color: var(--green-darkest);
+    }
+
+    .leakage-section {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    @media (min-width: 550px) {
+      .leakage-section {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .leakage-box {
+      border-radius: 10px;
+      padding: 1rem;
+    }
+
+    .leakage-box.problem {
+      background: var(--red-light);
+      border: 2px solid #e57373;
+    }
+
+    .leakage-box.solution {
+      background: var(--green-bg);
+      border: 2px solid #81c784;
+    }
+
+    .leakage-box h3 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .leakage-box h3 .icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .leakage-box h3 .icon svg {
+      width: 100%;
+      height: 100%;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .leakage-box.problem h3 { color: var(--red); }
+    .leakage-box.problem h3 .icon svg { stroke: var(--red); }
+    .leakage-box.solution h3 { color: #2e7d32; }
+    .leakage-box.solution h3 .icon svg { stroke: #2e7d32; }
+
+    .leakage-box p {
+      font-size: 0.85rem;
+      color: #444;
+      line-height: 1.5;
+    }
+
+    .leakage-box .stat {
+      font-size: clamp(1.5rem, 5vw, 1.75rem);
+      font-weight: 800;
+      margin: 0.5rem 0;
+    }
+
+    .leakage-box.problem .stat { color: var(--red); }
+    .leakage-box.solution .stat { color: #2e7d32; }
+
+    .principles {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    @media (min-width: 500px) {
+      .principles {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .principle {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+      border-top: 4px solid var(--green-darkest);
+    }
+
+    .principle .icon {
+      width: 32px;
+      height: 32px;
+      margin: 0 auto 0.5rem;
+    }
+
+    .principle .icon svg {
+      width: 100%;
+      height: 100%;
+      stroke: var(--green-dark);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .principle h3 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--green-darkest);
+      margin-bottom: 0.5rem;
+    }
+
+    .principle p {
+      font-size: 0.8rem;
+      color: #555;
+      line-height: 1.45;
+    }
+
+    .real-world {
+      background: #f4f4f4;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .real-world h2 {
+      border: none;
+      padding: 0;
+      margin-bottom: 0.75rem;
+    }
+
+    .examples {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    @media (min-width: 500px) {
+      .examples {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .example {
+      background: white;
+      border-radius: 8px;
+      padding: 0.85rem;
+      border: 1px solid #ddd;
+    }
+
+    .example h4 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--green-darkest);
+      margin-bottom: 0.35rem;
+    }
+
+    .example p {
+      font-size: 0.75rem;
+      color: #666;
+      line-height: 1.45;
+    }
+
+    .example em {
+      font-style: italic;
+      color: var(--green-dark);
+    }
+
+    .bottom-line {
+      background: var(--green-darkest);
+      color: white;
+      border-radius: 10px;
+      padding: 1.25rem;
+    }
+
+    .bottom-line h2 {
+      color: white;
+      border: none;
+      margin-bottom: 0.5rem;
+      padding: 0;
+      font-size: 1rem;
+    }
+
+    .bottom-line h2 .icon svg {
+      stroke: white;
+    }
+
+    .bottom-line p {
+      font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+      line-height: 1.6;
+      opacity: 0.95;
+    }
+
+    .bottom-line strong {
+      color: var(--green-light);
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1>The Economics of Loyalty</h1>
+      <div class="subtitle">Why habitual customers beat premium pricing—every time</div>
+    </header>
+
+    <div class="key-insight">
+      <p>Your competition isn't the shop next door.<br>It's <span class="highlight">Amazon, Target, and the default to online.</span><br>A 10% discount that builds a habit beats full price and an empty store.</p>
+    </div>
+
+    <h2>
+      <span class="icon"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg></span>
+      The Math: Occasional Full-Price vs. Habitual Discount
+    </h2>
+
+    <div class="math-section">
+      <div class="comparison">
+        <div class="scenario">
+          <h3>
+            <span class="icon x"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
+            Full Price, Occasional
+          </h3>
+          <div class="calc-row"><span>Visit frequency</span><span>1×/month</span></div>
+          <div class="calc-row"><span>Average ticket</span><span>$25.00</span></div>
+          <div class="calc-row"><span>Discount</span><span>0%</span></div>
+          <div class="calc-row"><span>Net per visit</span><span>$25.00</span></div>
+          <div class="calc-row"><span>Annual value</span><span>$300/year</span></div>
+        </div>
+
+        <div class="vs">VS</div>
+
+        <div class="scenario winner">
+          <h3>
+            <span class="icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>
+            10% Off, Weekly Habit
+          </h3>
+          <div class="calc-row"><span>Visit frequency</span><span>1×/week</span></div>
+          <div class="calc-row"><span>Average ticket</span><span>$15.00</span></div>
+          <div class="calc-row"><span>Discount</span><span>10%</span></div>
+          <div class="calc-row"><span>Net per visit</span><span>$13.50</span></div>
+          <div class="calc-row"><span>Annual value</span><span>$702/year</span></div>
+        </div>
+      </div>
+      <div class="math-note">The habitual customer is worth <strong>2.3× more</strong> despite the discount and smaller basket.</div>
+    </div>
+
+    <h2>
+      <span class="icon"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></span>
+      The Leakage Problem
+    </h2>
+
+    <div class="leakage-section">
+      <div class="leakage-box problem">
+        <h3>
+          <span class="icon"><svg viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M16 8l-8 8M8 8l8 8"/></svg></span>
+          Without a Loyalty System
+        </h3>
+        <p>Every purchase decision is a new opportunity to leak.</p>
+        <div class="stat">60-70%</div>
+        <p>of retail spending in small towns goes to big box stores and online retailers. That money leaves the community permanently.</p>
+      </div>
+
+      <div class="leakage-box solution">
+        <h3>
+          <span class="icon"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg></span>
+          With Habitual Local Shopping
+        </h3>
+        <p>Habits reduce decision fatigue. Local becomes the default.</p>
+        <div class="stat">2-3×</div>
+        <p>Local dollars circulate within the community before leaving. Your $10 becomes $20-30 in local economic activity.</p>
+      </div>
+    </div>
+
+    <h2>
+      <span class="icon"><svg viewBox="0 0 24 24"><path d="M12 2a8 8 0 018 8v12l-4-4H8l-4 4V10a8 8 0 018-8z"/><path d="M12 6v6"/><path d="M12 16h.01"/></svg></span>
+      Three Principles of Habit Economics
+    </h2>
+
+    <div class="principles">
+      <div class="principle">
+        <span class="icon"><svg viewBox="0 0 24 24"><path d="M17 2.1l4 4-4 4"/><path d="M3 12.2v-2a4 4 0 014-4h12.8M7 21.9l-4-4 4-4"/><path d="M21 11.8v2a4 4 0 01-4 4H4.2"/></svg></span>
+        <h3>Frequency Beats Margin</h3>
+        <p>A customer who comes weekly at 10% off is worth more than one who comes monthly at full price. Volume × frequency > margin × occasional.</p>
+      </div>
+
+      <div class="principle">
+        <span class="icon"><svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></span>
+        <h3>Defaults Win</h3>
+        <p>People don't decide where to shop—they default. Make local the habit and you've won before the "decision" happens.</p>
+      </div>
+
+      <div class="principle">
+        <span class="icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></span>
+        <h3>Loyalists Recruit</h3>
+        <p>Habitual customers tell friends. One loyal customer brings 2-3 more. Premium-seeking tourists don't do that.</p>
+      </div>
+    </div>
+
+    <div class="real-world">
+      <h2>
+        <span class="icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+        This Isn't Theory—It's Proven
+      </h2>
+      <div class="examples">
+        <div class="example">
+          <h4>Costco</h4>
+          <p>Low margins, high loyalty. Members spend $170/month on average because shopping there is a <em>habit</em>, not a decision.</p>
+        </div>
+        <div class="example">
+          <h4>Coffee Shops</h4>
+          <p>The daily $4 latte customer ($1,000/yr) is worth 10× the occasional $20 visitor. Cafés live on regulars.</p>
+        </div>
+        <div class="example">
+          <h4>Amazon Prime</h4>
+          <p>$139/year to lock in the habit. Prime members spend 2× more because Amazon becomes the default.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-line">
+      <h2>
+        <span class="icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></span>
+        The Bottom Line for Kinderhook Businesses
+      </h2>
+      <p>
+        A 10% OK Member discount isn't a loss—it's <strong>customer acquisition that pays for itself</strong>.
+        You're not competing with each other; you're competing with the couch and the "Add to Cart" button.
+        Every habit you build is a leak you've plugged. <strong>The village wins when shopping local is the default, not the exception.</strong>
+      </p>
+    </div>
+  </div>
+</body>
+</html>
