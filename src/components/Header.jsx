@@ -14,6 +14,7 @@ function Header() {
   const navLinks = [
     { to: '/', label: 'Home' },
     { to: '/map', label: 'Directory' },
+    { to: '/hunts', label: 'Explore' },
     { to: '/demo', label: 'See Demo' },
     { to: '/about', label: 'How It Works' },
     { to: '/businesses', label: 'For Businesses' },
@@ -57,9 +58,9 @@ function Header() {
             color: 'var(--kb-gold)',
             fontFamily: 'var(--font-display)',
             fontWeight: '700',
-            fontSize: '1.2rem',
+            fontSize: '0.9rem',
           }}>
-            K
+            OK
           </div>
           <div>
             <div style={{
@@ -69,7 +70,7 @@ function Header() {
               fontSize: '1.1rem',
               lineHeight: 1.1,
             }}>
-              Kinderbucks
+              OK Kinderhook
             </div>
             <div style={{
               fontSize: '0.65rem',
@@ -77,7 +78,7 @@ function Header() {
               textTransform: 'uppercase',
               letterSpacing: '0.1em',
             }}>
-              Village Currency
+              Shop Local
             </div>
           </div>
         </Link>

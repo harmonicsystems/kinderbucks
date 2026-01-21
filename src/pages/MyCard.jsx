@@ -14,11 +14,16 @@ import {
   Palette,
   Gift,
   ChevronRight,
-  Check
+  Check,
+  Flame,
+  Calendar,
+  Map,
+  Heart,
+  Compass
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { getCurrentUserId, getMember } from '../firebase/members'
-import { getMemberCheckinsByCategory, getMemberCheckinsByBusiness } from '../firebase/checkins'
+import { getMemberCheckinsByCategory, getMemberCheckinsByBusiness, getMemberCheckins } from '../firebase/checkins'
 import { getAllBusinesses, getCrossRewardsForMember } from '../firebase/businesses'
 import { TIERS } from '../utils/tiers'
 
@@ -109,6 +114,8 @@ function MyCard() {
   const [member, setMember] = useState(null)
   const [categoryCheckins, setCategoryCheckins] = useState({ food: 0, retail: 0, services: 0, arts: 0 })
   const [crossRewards, setCrossRewards] = useState([])
+  const [recentCheckins, setRecentCheckins] = useState([])
+  const [thisWeekCount, setThisWeekCount] = useState(0)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -122,11 +129,29 @@ function MyCard() {
 
       // Get check-ins by category and by business
       if (userId) {
-        const [catCounts, bizCheckins] = await Promise.all([
+        const [catCounts, bizCheckins, allCheckins] = await Promise.all([
           getMemberCheckinsByCategory(userId, businesses),
-          getMemberCheckinsByBusiness(userId, businesses)
+          getMemberCheckinsByBusiness(userId, businesses),
+          getMemberCheckins(userId)
         ])
         setCategoryCheckins(catCounts)
+
+        // Calculate this week's check-ins
+        const weekAgo = new Date()
+        weekAgo.setDate(weekAgo.getDate() - 7)
+        const weekCheckins = allCheckins.filter(c => {
+          const date = c.timestamp?.toDate ? c.timestamp.toDate() : new Date(c.timestamp)
+          return date > weekAgo
+        })
+        setThisWeekCount(weekCheckins.length)
+
+        // Get recent check-ins (last 5)
+        const sorted = allCheckins.sort((a, b) => {
+          const dateA = a.timestamp?.toDate ? a.timestamp.toDate() : new Date(a.timestamp)
+          const dateB = b.timestamp?.toDate ? b.timestamp.toDate() : new Date(b.timestamp)
+          return dateB - dateA
+        })
+        setRecentCheckins(sorted.slice(0, 5))
 
         // Get cross-rewards with progress
         const rewards = await getCrossRewardsForMember(userId, bizCheckins)
@@ -148,6 +173,22 @@ function MyCard() {
   // Generate member number from user ID
   const userId = getCurrentUserId()
   const memberNumber = userId ? `OK-${userId.substring(0, 6).toUpperCase()}` : 'OK-GUEST'
+
+  // Helper function for time ago
+  const getTimeAgo = (date) => {
+    const now = new Date()
+    const diffMs = now - date
+    const diffMins = Math.floor(diffMs / 60000)
+    const diffHours = Math.floor(diffMs / 3600000)
+    const diffDays = Math.floor(diffMs / 86400000)
+
+    if (diffMins < 1) return 'Just now'
+    if (diffMins < 60) return `${diffMins}m ago`
+    if (diffHours < 24) return `${diffHours}h ago`
+    if (diffDays === 1) return 'Yesterday'
+    if (diffDays < 7) return `${diffDays}d ago`
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  }
 
   if (loading) {
     return (
@@ -375,11 +416,115 @@ function MyCard() {
                 })}
               </div>
 
-              {/* Total Stats Row */}
+              {/* Achievement Badges */}
+              <div style={{
+                display: 'flex',
+                gap: '0.5rem',
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+                marginBottom: '1rem',
+              }}>
+                {/* Explorer Badge - 5 different businesses */}
+                {uniqueCount >= 5 && (
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                    padding: '0.4rem 0.75rem',
+                    background: 'rgba(37, 99, 235, 0.1)',
+                    border: '1px solid #2563eb',
+                    borderRadius: '100px',
+                    fontSize: '0.75rem',
+                    fontWeight: '600',
+                    color: '#2563eb',
+                  }}>
+                    <Compass size={14} />
+                    Explorer
+                  </div>
+                )}
+
+                {/* Regular Badge - 10+ total check-ins */}
+                {(member?.totalCheckins || 0) >= 10 && (
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                    padding: '0.4rem 0.75rem',
+                    background: 'rgba(39, 174, 96, 0.1)',
+                    border: '1px solid #27ae60',
+                    borderRadius: '100px',
+                    fontSize: '0.75rem',
+                    fontWeight: '600',
+                    color: '#27ae60',
+                  }}>
+                    <Star size={14} />
+                    Regular
+                  </div>
+                )}
+
+                {/* On Fire Badge - 7+ check-ins this week */}
+                {thisWeekCount >= 7 && (
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                    padding: '0.4rem 0.75rem',
+                    background: 'rgba(230, 126, 34, 0.1)',
+                    border: '1px solid #e67e22',
+                    borderRadius: '100px',
+                    fontSize: '0.75rem',
+                    fontWeight: '600',
+                    color: '#e67e22',
+                  }}>
+                    <Flame size={14} />
+                    On Fire!
+                  </div>
+                )}
+
+                {/* Completionist Badge - visited all businesses (assume 19 for now) */}
+                {uniqueCount >= 15 && (
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                    padding: '0.4rem 0.75rem',
+                    background: 'rgba(201, 162, 39, 0.15)',
+                    border: '2px solid var(--kb-gold)',
+                    borderRadius: '100px',
+                    fontSize: '0.75rem',
+                    fontWeight: '700',
+                    color: 'var(--kb-gold-dark)',
+                  }}>
+                    <Crown size={14} />
+                    Completionist
+                  </div>
+                )}
+
+                {/* Loyalist Badge - 5+ visits to same business */}
+                {Object.values(categoryCheckins).some(count => count >= 5) && (
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                    padding: '0.4rem 0.75rem',
+                    background: 'rgba(155, 89, 182, 0.1)',
+                    border: '1px solid #9b59b6',
+                    borderRadius: '100px',
+                    fontSize: '0.75rem',
+                    fontWeight: '600',
+                    color: '#9b59b6',
+                  }}>
+                    <Heart size={14} />
+                    Loyalist
+                  </div>
+                )}
+              </div>
+
+              {/* Stats Row */}
               <div style={{
                 display: 'flex',
                 justifyContent: 'center',
-                gap: '2rem',
+                gap: '1.5rem',
                 padding: '0.75rem 0',
                 borderTop: '1px solid var(--kb-gray-200)',
                 borderBottom: '1px solid var(--kb-gray-200)',
@@ -387,14 +532,14 @@ function MyCard() {
               }}>
                 <div style={{ textAlign: 'center' }}>
                   <div style={{
-                    fontSize: '1.5rem',
+                    fontSize: '1.4rem',
                     fontWeight: '700',
                     color: 'var(--kb-navy)',
                   }}>
                     {uniqueCount}
                   </div>
                   <div style={{
-                    fontSize: '0.8rem',
+                    fontSize: '0.75rem',
                     color: 'var(--kb-gray-500)',
                   }}>
                     Businesses
@@ -402,17 +547,37 @@ function MyCard() {
                 </div>
                 <div style={{ textAlign: 'center' }}>
                   <div style={{
-                    fontSize: '1.5rem',
+                    fontSize: '1.4rem',
+                    fontWeight: '700',
+                    color: thisWeekCount > 0 ? 'var(--kb-green)' : 'var(--kb-navy)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.25rem',
+                  }}>
+                    {thisWeekCount > 0 && <Flame size={16} color="var(--kb-green)" />}
+                    {thisWeekCount}
+                  </div>
+                  <div style={{
+                    fontSize: '0.75rem',
+                    color: 'var(--kb-gray-500)',
+                  }}>
+                    This Week
+                  </div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{
+                    fontSize: '1.4rem',
                     fontWeight: '700',
                     color: 'var(--kb-navy)',
                   }}>
                     {member?.totalCheckins || 0}
                   </div>
                   <div style={{
-                    fontSize: '0.8rem',
+                    fontSize: '0.75rem',
                     color: 'var(--kb-gray-500)',
                   }}>
-                    Total Check-ins
+                    All Time
                   </div>
                 </div>
               </div>
@@ -566,9 +731,59 @@ function MyCard() {
             </div>
           )}
 
+          {/* Recent Activity */}
+          {recentCheckins.length > 0 && (
+            <div style={{
+              marginTop: '1.5rem',
+              background: 'white',
+              borderRadius: '16px',
+              padding: '1rem',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                marginBottom: '0.75rem',
+                color: 'var(--kb-navy)',
+                fontWeight: '600',
+              }}>
+                <Calendar size={18} color="var(--kb-navy)" />
+                Recent Activity
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                {recentCheckins.map((checkin, idx) => {
+                  const date = checkin.timestamp?.toDate ? checkin.timestamp.toDate() : new Date(checkin.timestamp)
+                  const timeAgo = getTimeAgo(date)
+
+                  return (
+                    <div
+                      key={idx}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '0.5rem',
+                        background: 'var(--kb-gray-50)',
+                        borderRadius: '8px',
+                      }}
+                    >
+                      <span style={{ fontSize: '0.85rem', color: 'var(--kb-navy)' }}>
+                        {checkin.businessName}
+                      </span>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--kb-gray-500)' }}>
+                        {timeAgo}
+                      </span>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
           {/* CTA below card */}
           <Link
-            to="/businesses"
+            to="/map"
             className="btn btn-gold"
             style={{
               display: 'flex',

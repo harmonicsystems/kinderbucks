@@ -10,7 +10,9 @@ import {
   Settings,
   LogOut,
   Shield,
-  Banknote
+  Banknote,
+  MapPin,
+  Map
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { logOut } from '../firebase/auth'
@@ -28,6 +30,8 @@ function AdminLayout({ children, title }) {
     { to: '/admin/generate', label: 'Generate QR', Icon: QrCode },
     { to: '/admin/issue', label: 'Issue Currency', Icon: Send },
     { to: '/admin/businesses', label: 'Businesses', Icon: Store },
+    { to: '/admin/landmarks', label: 'Landmarks', Icon: MapPin },
+    { to: '/admin/hunts', label: 'Discovery Trails', Icon: Map },
     { to: '/admin/users', label: 'User Management', Icon: Shield },
   ]
 

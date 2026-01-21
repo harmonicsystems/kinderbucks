@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The $8 Bill - A Meme That Spends</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --money-green: #85bb65;
+      --money-dark: #4a7c34;
+      --bg-dark: #0f0f0f;
+      --bg-card: #1a1a1a;
+      --blue: #64b5f6;
+      --red: #e57373;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      padding: 1rem;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--bg-dark);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+      color: white;
+    }
+
+    /* Print - keeps dark theme but optimizes */
+    @media print {
+      body { background: white; padding: 0; }
+      .page { box-shadow: none; border-radius: 0; padding: 0.5in; }
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .pretitle {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: #888;
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 8vw, 2.75rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, #85bb65 0%, #c5e1a5 50%, #85bb65 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-size: clamp(0.95rem, 3vw, 1.125rem);
+      color: #aaa;
+    }
+
+    .bill-mockup {
+      background: linear-gradient(135deg, #85bb65 0%, #6b9b4f 100%);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin: 1rem 0;
+      text-align: center;
+      border: 4px solid var(--money-dark);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bill-mockup::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        rgba(255,255,255,0.03) 10px,
+        rgba(255,255,255,0.03) 20px
+      );
+    }
+
+    .bill-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .denomination {
+      font-size: clamp(1.75rem, 6vw, 2.25rem);
+      font-weight: 900;
+      color: #1a3a1a;
+      text-shadow: 1px 1px 0 rgba(255,255,255,0.3);
+    }
+
+    .portrait-area {
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      width: clamp(70px, 15vw, 100px);
+      height: clamp(70px, 15vw, 100px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 4px solid rgba(255,255,255,0.4);
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .portrait-area img {
+      width: 120%;
+      height: auto;
+      object-fit: cover;
+      filter: sepia(30%) contrast(1.1);
+    }
+
+    .bill-text {
+      font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+      font-weight: 700;
+      color: #1a3a1a;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .bill-subtext {
+      font-size: clamp(0.7rem, 2vw, 0.75rem);
+      color: #2d5a2d;
+      margin-top: 0.35rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .the-joke {
+      background: var(--bg-card);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+      border: 2px solid #333;
+    }
+
+    .the-joke h2 {
+      font-size: 0.85rem;
+      color: var(--money-green);
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .the-joke h2 .icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .the-joke h2 .icon svg {
+      width: 100%;
+      height: 100%;
+      stroke: var(--money-green);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .joke-grid {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.5rem 1rem;
+      font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+    }
+
+    .joke-grid .q {
+      color: #666;
+      font-weight: 600;
+    }
+
+    .joke-grid .a {
+      color: #fff;
+    }
+
+    .joke-grid .punchline {
+      color: var(--money-green);
+      font-weight: 700;
+    }
+
+    .viral-section {
+      background: linear-gradient(135deg, #1e3a5f 0%, #16213e 100%);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border: 2px solid #2a4a7f;
+    }
+
+    .viral-section h2 {
+      font-size: 0.9rem;
+      color: var(--blue);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .viral-section h2 .icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .viral-section h2 .icon svg {
+      width: 100%;
+      height: 100%;
+      stroke: var(--blue);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .viral-ideas {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    @media (min-width: 500px) {
+      .viral-ideas {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .viral-idea {
+      background: rgba(0,0,0,0.3);
+      border-radius: 8px;
+      padding: 0.85rem;
+      border-left: 3px solid var(--blue);
+    }
+
+    .viral-idea h3 {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--blue);
+      margin-bottom: 0.35rem;
+    }
+
+    .viral-idea p {
+      font-size: 0.75rem;
+      color: #aaa;
+      line-height: 1.45;
+    }
+
+    .hashtag {
+      color: var(--money-green);
+      font-weight: 600;
+    }
+
+    .hooks-section {
+      background: var(--bg-card);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border: 2px solid #333;
+    }
+
+    .hooks-section h2 {
+      font-size: 0.85rem;
+      color: var(--red);
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .hooks-section h2 .icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .hooks-section h2 .icon svg {
+      width: 100%;
+      height: 100%;
+      stroke: var(--red);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .hooks-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+
+    .hook {
+      background: rgba(255,255,255,0.05);
+      border-radius: 6px;
+      padding: 0.65rem 0.85rem;
+      font-size: clamp(0.75rem, 2.5vw, 0.85rem);
+      color: #ddd;
+      border-left: 3px solid var(--red);
+      font-style: italic;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .hook .icon {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .hook .icon svg {
+      width: 100%;
+      height: 100%;
+      stroke: var(--red);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .bottom-section {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    @media (min-width: 550px) {
+      .bottom-section {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .why-box {
+      background: var(--money-green);
+      color: var(--bg-dark);
+      border-radius: 10px;
+      padding: 1rem;
+    }
+
+    .why-box h3 {
+      font-size: 0.85rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .why-box h3 .icon {
+      width: 18px;
+      height: 18px;
+    }
+
+    .why-box h3 .icon svg {
+      width: 100%;
+      height: 100%;
+      stroke: var(--bg-dark);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .why-box p {
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+
+    .ask-box {
+      background: var(--bg-card);
+      border-radius: 10px;
+      padding: 1rem;
+      border: 2px solid #333;
+    }
+
+    .ask-box h3 {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--money-green);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .ask-box h3 .icon {
+      width: 18px;
+      height: 18px;
+    }
+
+    .ask-box h3 .icon svg {
+      width: 100%;
+      height: 100%;
+      stroke: var(--money-green);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .ask-box ul {
+      list-style: none;
+      font-size: 0.75rem;
+      color: #aaa;
+    }
+
+    .ask-box li {
+      padding: 0.25rem 0;
+      padding-left: 1.25rem;
+      position: relative;
+    }
+
+    .ask-box li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.55rem;
+      width: 0;
+      height: 0;
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+      border-left: 6px solid var(--money-green);
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="pretitle">Introducing</div>
+      <h1>The $8 Bill</h1>
+      <div class="subtitle">A meme that actually spends</div>
+    </header>
+
+    <div class="bill-mockup">
+      <div class="bill-top">
+        <div class="denomination">$8</div>
+        <div class="portrait-area"><img src="Martin_Van_Buren_by_Mathew_Brady_c1855-58-(4).jpg" alt="Martin Van Buren by Mathew Brady"></div>
+        <div class="denomination">$8</div>
+      </div>
+      <div class="bill-text">Eight Kinderbucks</div>
+      <div class="bill-subtext">Martin Van Buren · 8th President · Born in Kinderhook · The Original OK</div>
+    </div>
+
+    <div class="the-joke">
+      <h2>
+        <span class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span>
+        The Joke That Explains Itself
+      </h2>
+      <div class="joke-grid">
+        <span class="q">Why $8?</span>
+        <span class="a">Van Buren was the <span class="punchline">8th President</span></span>
+
+        <span class="q">Why Van Buren?</span>
+        <span class="a">He was <span class="punchline">born in Kinderhook</span></span>
+
+        <span class="q">Why "OK"?</span>
+        <span class="a">His nickname was "Old Kinderhook" — <span class="punchline">origin of "OK"</span></span>
+
+        <span class="q">Can you spend it?</span>
+        <span class="a"><span class="punchline">Yes. At any participating business. For $8.</span></span>
+      </div>
+    </div>
+
+    <div class="viral-section">
+      <h2>
+        <span class="icon"><svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></span>
+        Viral Potential
+      </h2>
+      <div class="viral-ideas">
+        <div class="viral-idea">
+          <h3>"Is this real?" TikTok</h3>
+          <p>Film yourself spending an $8 bill at a local shop. Cashier's reaction. "Yes, it's real here." <span class="hashtag">#Kinderbucks #8DollarBill</span></p>
+        </div>
+        <div class="viral-idea">
+          <h3>History Nerd Bait</h3>
+          <p>"The only president born in Kinderhook is on the only $8 bill in America." Watch the quote-tweets explode.</p>
+        </div>
+        <div class="viral-idea">
+          <h3>Collector's Item Flex</h3>
+          <p>Limited runs. Serial numbers. "I got bill #0008." Artificial scarcity drives shares.</p>
+        </div>
+        <div class="viral-idea">
+          <h3>Tourism Hook</h3>
+          <p>"I drove 2 hours to get an $8 bill." Day-trip content. Local business cameos. <span class="hashtag">#VisitKinderhook</span></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="hooks-section">
+      <h2>
+        <span class="icon"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg></span>
+        Ready-Made Captions
+      </h2>
+      <div class="hooks-list">
+        <div class="hook">
+          <span class="icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></span>
+          "POV: You're in the only town in America where $8 bills are legal tender"
+        </div>
+        <div class="hook">
+          <span class="icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></span>
+          "Van Buren finally getting the recognition he deserves (on money that doesn't exist)"
+        </div>
+        <div class="hook">
+          <span class="icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></span>
+          "My village has its own currency and honestly it's the most OK thing ever"
+        </div>
+        <div class="hook">
+          <span class="icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></span>
+          "Tell me you're from Kinderhook without telling me you're from Kinderhook" *holds up $8 bill*
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-section">
+      <div class="why-box">
+        <h3>
+          <span class="icon"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm1 15h-2v-2h2zm0-4h-2V7h2z"/></svg></span>
+          Why This Works
+        </h3>
+        <p>
+          Memes spread. Currency is inherently shareable. The $8 bill is <strong>absurd enough to screenshot</strong> but <strong>real enough to visit</strong>. Every share is free advertising for Kinderhook. Every tourist who comes for the meme stays for the village.
+        </p>
+      </div>
+
+      <div class="ask-box">
+        <h3>
+          <span class="icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></span>
+          The Ask
+        </h3>
+        <ul>
+          <li>Design the bill (vintage aesthetic, meme energy)</li>
+          <li>Launch video: "Introducing the $8 Bill"</li>
+          <li>Coordinate with 3-5 businesses for "reaction" content</li>
+          <li>Seed on TikTok, Instagram, local history Twitter</li>
+          <li>Limited first run: 88 bills, numbered</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

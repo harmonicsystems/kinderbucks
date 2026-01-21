@@ -260,6 +260,54 @@ export async function updateBusinessPhoto(code, photoUrl) {
   })
 }
 
+// ==================== OK MEMBER DISCOUNTS ====================
+
+/**
+ * OK Member Discount schema:
+ * {
+ *   okMemberDiscount: string (e.g., "10% off", "Free drink with purchase"),
+ *   kinderbucksSpecials: [
+ *     { amount: number, description: string }
+ *   ]
+ * }
+ */
+
+/**
+ * Update business OK Member discount
+ */
+export async function updateBusinessOKDiscount(code, okMemberDiscount) {
+  const docRef = doc(db, COLLECTION, code)
+  await updateDoc(docRef, {
+    okMemberDiscount,
+    discountUpdatedAt: serverTimestamp()
+  })
+}
+
+/**
+ * Update business Kinderbucks specials
+ */
+export async function updateBusinessKBSpecials(code, kinderbucksSpecials) {
+  const docRef = doc(db, COLLECTION, code)
+  await updateDoc(docRef, {
+    kinderbucksSpecials,
+    specialsUpdatedAt: serverTimestamp()
+  })
+}
+
+/**
+ * Get business with discount info
+ */
+export async function getBusinessWithDiscounts(code) {
+  const business = await getBusiness(code)
+  if (!business) return null
+
+  return {
+    ...business,
+    okMemberDiscount: business.okMemberDiscount || null,
+    kinderbucksSpecials: business.kinderbucksSpecials || []
+  }
+}
+
 // ==================== LOYALTY REWARDS ====================
 
 /**

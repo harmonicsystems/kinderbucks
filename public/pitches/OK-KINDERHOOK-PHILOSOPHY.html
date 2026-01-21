@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Circulation is Life - The VillageOS Philosophy</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #faf9f7;
+      color: #2a2a2a;
+      line-height: 1.7;
+    }
+
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: clamp(40px, 10vw, 60px) clamp(16px, 4vw, 24px);
+      background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+      color: white;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 200px;
+      background: linear-gradient(to bottom, transparent, #faf9f7);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 700px;
+    }
+
+    .hero h1 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(36px, 8vw, 64px);
+      font-weight: 700;
+      margin-bottom: 24px;
+      line-height: 1.1;
+    }
+
+    .hero p {
+      font-size: clamp(17px, 3vw, 22px);
+      opacity: 0.9;
+      margin-bottom: 16px;
+    }
+
+    .hero .small {
+      font-size: 14px;
+      opacity: 0.6;
+      margin-top: 40px;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: clamp(48px, 10vw, 80px) clamp(16px, 4vw, 24px);
+    }
+
+    h2 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(26px, 5vw, 36px);
+      color: #1a1a2e;
+      margin-bottom: 24px;
+      margin-top: clamp(40px, 8vw, 60px);
+    }
+
+    h2:first-of-type {
+      margin-top: 0;
+    }
+
+    p {
+      font-size: clamp(16px, 2.5vw, 18px);
+      margin-bottom: 20px;
+      color: #444;
+    }
+
+    .lead {
+      font-size: clamp(18px, 3vw, 22px);
+      color: #2a2a2a;
+      font-weight: 500;
+    }
+
+    .highlight-box {
+      background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+      border-left: 4px solid #4caf50;
+      padding: clamp(20px, 4vw, 28px) clamp(20px, 4vw, 32px);
+      margin: 32px 0;
+      border-radius: 0 12px 12px 0;
+    }
+
+    .highlight-box p {
+      margin: 0;
+      font-size: clamp(15px, 2.5vw, 17px);
+      color: #2e7d32;
+    }
+
+    .comparison-section {
+      background: #1a1a2e;
+      color: white;
+      padding: clamp(40px, 8vw, 60px) clamp(16px, 4vw, 24px);
+      margin: 60px calc(-1 * clamp(16px, 4vw, 24px));
+    }
+
+    .comparison-section .inner {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .comparison-section h2 {
+      color: white;
+      text-align: center;
+      margin-top: 0;
+    }
+
+    .platform-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 40px;
+    }
+
+    .platform-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: clamp(18px, 3vw, 24px);
+    }
+
+    .platform-card h3 {
+      font-size: 17px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .platform-card h3 svg {
+      width: 20px;
+      height: 20px;
+      stroke: white;
+      stroke-width: 2;
+      fill: none;
+      flex-shrink: 0;
+    }
+
+    .platform-card .take {
+      font-size: 14px;
+      color: #4ade80;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .platform-card .take svg {
+      width: 14px;
+      height: 14px;
+      stroke: #4ade80;
+      stroke-width: 3;
+      fill: none;
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+
+    .platform-card .leave {
+      font-size: 13px;
+      color: #f87171;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .platform-card .leave svg {
+      width: 14px;
+      height: 14px;
+      stroke: #f87171;
+      stroke-width: 3;
+      fill: none;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .synthesis-box {
+      background: linear-gradient(135deg, #4ade80 0%, #22d3ee 100%);
+      border-radius: 16px;
+      padding: clamp(24px, 4vw, 32px);
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .synthesis-box h3 {
+      font-size: clamp(18px, 3vw, 24px);
+      color: #0a0a0f;
+      margin-bottom: 12px;
+    }
+
+    .synthesis-box p {
+      font-size: clamp(14px, 2vw, 16px);
+      color: #1a1a2e;
+      margin: 0;
+    }
+
+    .circulation-types {
+      margin: 40px 0;
+    }
+
+    .circulation-type {
+      display: flex;
+      align-items: flex-start;
+      gap: clamp(12px, 3vw, 20px);
+      padding: 24px 0;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .circulation-type:last-child {
+      border-bottom: none;
+    }
+
+    .circulation-icon {
+      width: 48px;
+      height: 48px;
+      background: #f5f5f5;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .circulation-icon svg {
+      width: 26px;
+      height: 26px;
+      stroke: #4caf50;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .circulation-content h3 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(18px, 3vw, 22px);
+      color: #1a1a2e;
+      margin-bottom: 8px;
+    }
+
+    .circulation-content p {
+      font-size: clamp(14px, 2vw, 16px);
+      color: #555;
+      margin: 0;
+    }
+
+    .versus-section {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: clamp(12px, 3vw, 24px);
+      align-items: start;
+      margin: 48px 0;
+    }
+
+    .versus-col {
+      padding: clamp(20px, 3vw, 28px);
+      border-radius: 12px;
+    }
+
+    .versus-col.extraction {
+      background: #fef2f2;
+      border: 2px solid #fecaca;
+    }
+
+    .versus-col.circulation {
+      background: #f0fdf4;
+      border: 2px solid #bbf7d0;
+    }
+
+    .versus-col h3 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(16px, 2.5vw, 20px);
+      margin-bottom: 16px;
+    }
+
+    .versus-col.extraction h3 { color: #b91c1c; }
+    .versus-col.circulation h3 { color: #15803d; }
+
+    .versus-col ul {
+      list-style: none;
+      font-size: clamp(13px, 2vw, 15px);
+    }
+
+    .versus-col li {
+      padding: 6px 0;
+      color: #555;
+    }
+
+    .versus-center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Fraunces', serif;
+      font-size: clamp(18px, 3vw, 24px);
+      color: #888;
+      padding-top: 60px;
+    }
+
+    .principle-section {
+      background: #f5f5f5;
+      padding: clamp(32px, 5vw, 48px);
+      border-radius: 16px;
+      margin: 48px 0;
+    }
+
+    .principle-section h2 {
+      margin-top: 0;
+      text-align: center;
+    }
+
+    .principles {
+      display: grid;
+      gap: 24px;
+      margin-top: 32px;
+    }
+
+    .principle {
+      display: flex;
+      gap: 16px;
+    }
+
+    .principle-num {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(24px, 4vw, 32px);
+      font-weight: 700;
+      color: #4caf50;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .principle-content h4 {
+      font-size: clamp(16px, 2.5vw, 18px);
+      color: #1a1a2e;
+      margin-bottom: 6px;
+    }
+
+    .principle-content p {
+      font-size: clamp(14px, 2vw, 15px);
+      color: #666;
+      margin: 0;
+    }
+
+    .quote-block {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(22px, 4vw, 28px);
+      color: #1a1a2e;
+      text-align: center;
+      padding: clamp(32px, 6vw, 48px) clamp(16px, 4vw, 24px);
+      margin: 48px 0;
+      border-top: 2px solid #e0e0e0;
+      border-bottom: 2px solid #e0e0e0;
+      line-height: 1.4;
+    }
+
+    .body-metaphor {
+      background: linear-gradient(135deg, #fce4ec 0%, #f3e5f5 100%);
+      border-radius: 16px;
+      padding: clamp(24px, 5vw, 36px);
+      margin: 48px 0;
+    }
+
+    .body-metaphor h3 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(20px, 3vw, 24px);
+      color: #880e4f;
+      margin-bottom: 20px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .body-metaphor h3 svg {
+      width: 28px;
+      height: 28px;
+      stroke: #880e4f;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .body-metaphor > p {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #666;
+    }
+
+    .body-systems {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .body-system {
+      background: rgba(255,255,255,0.7);
+      border-radius: 10px;
+      padding: 16px;
+    }
+
+    .body-system h4 {
+      font-size: 15px;
+      color: #880e4f;
+      margin-bottom: 4px;
+    }
+
+    .body-system p {
+      font-size: 13px;
+      color: #666;
+      margin: 0;
+    }
+
+    .closing {
+      text-align: center;
+      padding: clamp(40px, 8vw, 60px) 0;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .closing h2 {
+      margin-bottom: 16px;
+    }
+
+    .closing p {
+      font-size: clamp(16px, 2.5vw, 18px);
+      color: #666;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .signature {
+      margin-top: 40px;
+      font-size: 14px;
+      color: #999;
+    }
+
+    @media (max-width: 600px) {
+      .versus-section {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      .versus-center {
+        padding: 8px 0;
+      }
+    }
+
+    @media print {
+      .hero { min-height: auto; background: #333 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .hero::after { display: none; }
+      .comparison-section { background: #333 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .container { padding: 40px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hero">
+    <div class="hero-content">
+      <h1>Circulation is Life</h1>
+      <p>A healthy village is one where things flow.<br>Money. People. Information. Engagement.</p>
+      <p>The question isn't "how do we extract value?"<br>It's "how do we keep things moving?"</p>
+      <div class="small">The VillageOS Philosophy</div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <p class="lead">Every successful digital platform solved a circulation problem. Google circulates information. Uber circulates people. Venmo circulates money. But they all extract value in the process. They take a cut. They harvest data. They create dependency.</p>
+
+    <p>What if we took everything they learned about circulation-and applied it with a <em>municipal</em> mindset instead of a corporate one?</p>
+
+    <h2>What We Take From Each</h2>
+  </div>
+
+  <div class="comparison-section">
+    <div class="inner">
+      <h2>The Synthesis</h2>
+
+      <div class="platform-grid">
+        <div class="platform-card">
+          <h3>
+            <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Google Maps
+          </h3>
+          <div class="take">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Take: Location awareness, discovery, wayfinding
+          </div>
+          <div class="leave">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Leave: Surveillance, ad targeting, data harvesting
+          </div>
+        </div>
+
+        <div class="platform-card">
+          <h3>
+            <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+            Loyalty Programs
+          </h3>
+          <div class="take">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Take: Habit formation, return visits, rewards
+          </div>
+          <div class="leave">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Leave: Corporate ownership, siloed points, expiration
+          </div>
+        </div>
+
+        <div class="platform-card">
+          <h3>
+            <svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+            Achievements (Gaming)
+          </h3>
+          <div class="take">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Take: Progression, completionism, social proof
+          </div>
+          <div class="leave">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Leave: Addiction loops, pay-to-win, isolation
+          </div>
+        </div>
+
+        <div class="platform-card">
+          <h3>
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Facebook Groups
+          </h3>
+          <div class="take">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Take: Community identity, shared interest, belonging
+          </div>
+          <div class="leave">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Leave: Algorithmic rage, data mining, attention theft
+          </div>
+        </div>
+
+        <div class="platform-card">
+          <h3>
+            <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            Nextdoor
+          </h3>
+          <div class="take">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Take: Hyperlocal focus, neighbor connection
+          </div>
+          <div class="leave">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Leave: Fear-mongering, NIMBYism, complaint culture
+          </div>
+        </div>
+
+        <div class="platform-card">
+          <h3>
+            <svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M2 10h2"/><path d="M20 10h2"/></svg>
+            Local Currency (BerkShares)
+          </h3>
+          <div class="take">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Take: Economic localism, multiplier effect, identity
+          </div>
+          <div class="leave">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Leave: Complexity, limited adoption, no digital layer
+          </div>
+        </div>
+      </div>
+
+      <div class="synthesis-box">
+        <h3>VillageOS = Best of All, Owned by None</h3>
+        <p>Municipal infrastructure, not corporate platform. Community data, not harvested data. Circulation, not extraction.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <h2>Five Types of Circulation</h2>
+    <p>A living village has multiple circulatory systems. When any of them stagnate, the village suffers. VillageOS keeps them all flowing.</p>
+
+    <div class="circulation-types">
+      <div class="circulation-type">
+        <div class="circulation-icon">
+          <svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
+        </div>
+        <div class="circulation-content">
+          <h3>Money Circulation</h3>
+          <p>Local dollars spent locally circulate 2-3x before leaving. Amazon purchases leave immediately. Kinderbucks and loyalty rewards keep money moving through Main Street instead of to Seattle.</p>
+        </div>
+      </div>
+
+      <div class="circulation-type">
+        <div class="circulation-icon">
+          <svg viewBox="0 0 24 24"><path d="M13 4v16"/><path d="M17 4v16"/><path d="M19 4H9.5a4.5 4.5 0 0 0 0 9H17"/></svg>
+        </div>
+        <div class="circulation-content">
+          <h3>Movement Circulation</h3>
+          <p>Foot traffic is the lifeblood of a village. Scavenger hunts, trail badges, and check-ins turn passive residents into active explorers. People who move through space discover businesses, meet neighbors, and feel ownership.</p>
+        </div>
+      </div>
+
+      <div class="circulation-type">
+        <div class="circulation-icon">
+          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <div class="circulation-content">
+          <h3>Information Circulation</h3>
+          <p>A village where nobody knows what's happening is a dying village. Shared analytics, event awareness, and collective memory keep everyone informed without requiring a Facebook addiction.</p>
+        </div>
+      </div>
+
+      <div class="circulation-type">
+        <div class="circulation-icon">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="circulation-content">
+          <h3>Social Circulation</h3>
+          <p>Weak ties matter. The barista who knows your name. The neighbor you wave to. Badges and streaks create excuses for repeated interaction, turning strangers into acquaintances into community.</p>
+        </div>
+      </div>
+
+      <div class="circulation-type">
+        <div class="circulation-icon">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div class="circulation-content">
+          <h3>Engagement Circulation</h3>
+          <p>Attention is finite. When it flows to Instagram, it's not flowing to your neighbor's art show. VillageOS creates local loops of engagement-quests, collections, achievements-that compete with global platforms for local attention.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="quote-block">
+      "The question isn't how to capture value.<br>It's how to keep value moving."
+    </div>
+
+    <h2>Extraction vs. Circulation</h2>
+
+    <div class="versus-section">
+      <div class="versus-col extraction">
+        <h3>Extraction Mindset</h3>
+        <ul>
+          <li>How do we monetize users?</li>
+          <li>How do we increase time-on-platform?</li>
+          <li>How do we own the data?</li>
+          <li>How do we create lock-in?</li>
+          <li>How do we take a cut?</li>
+          <li>How do we scale to billions?</li>
+          <li>Metric: Revenue per user</li>
+        </ul>
+      </div>
+
+      <div class="versus-center">vs.</div>
+
+      <div class="versus-col circulation">
+        <h3>Circulation Mindset</h3>
+        <ul>
+          <li>How do we move people to Main Street?</li>
+          <li>How do we increase time-in-village?</li>
+          <li>How do we share data with the community?</li>
+          <li>How do we create portability?</li>
+          <li>How do we keep value local?</li>
+          <li>How do we strengthen one place deeply?</li>
+          <li>Metric: Circulation velocity</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="body-metaphor">
+      <h3>
+        <svg viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        The Village as Body
+      </h3>
+      <p>A village is a living organism. Every living thing depends on circulation.</p>
+
+      <div class="body-systems">
+        <div class="body-system">
+          <h4>Circulatory System</h4>
+          <p>Money flow. If it stops, tissues die. Local currency keeps blood moving.</p>
+        </div>
+        <div class="body-system">
+          <h4>Nervous System</h4>
+          <p>Information. Shared analytics. Event awareness. Knowing what's happening.</p>
+        </div>
+        <div class="body-system">
+          <h4>Musculoskeletal System</h4>
+          <p>Movement. Foot traffic. People physically present, walking, exploring.</p>
+        </div>
+        <div class="body-system">
+          <h4>Immune System</h4>
+          <p>Community trust. Weak ties. Social fabric that resists extraction and division.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle-section">
+      <h2>Design Principles</h2>
+
+      <div class="principles">
+        <div class="principle">
+          <div class="principle-num">1</div>
+          <div class="principle-content">
+            <h4>Municipal, Not Corporate</h4>
+            <p>This is infrastructure, like roads or streetlights. It should be owned by the community it serves, not by shareholders in another state.</p>
+          </div>
+        </div>
+
+        <div class="principle">
+          <div class="principle-num">2</div>
+          <div class="principle-content">
+            <h4>Circulation, Not Extraction</h4>
+            <p>Every feature should be evaluated by one question: does this keep things moving, or does this capture and hold?</p>
+          </div>
+        </div>
+
+        <div class="principle">
+          <div class="principle-num">3</div>
+          <div class="principle-content">
+            <h4>Physical + Digital</h4>
+            <p>Digital tools should drive physical presence. If it keeps people on their phones instead of in the village, it's failed.</p>
+          </div>
+        </div>
+
+        <div class="principle">
+          <div class="principle-num">4</div>
+          <div class="principle-content">
+            <h4>Transparent by Default</h4>
+            <p>Data belongs to the community. Aggregate analytics should be visible to everyone. Sunlight is the best disinfectant.</p>
+          </div>
+        </div>
+
+        <div class="principle">
+          <div class="principle-num">5</div>
+          <div class="principle-content">
+            <h4>Opt-In Depth</h4>
+            <p>Simple for those who want simple. Deep for those who want deep. A card works. Gamification is optional. Nobody left behind.</p>
+          </div>
+        </div>
+
+        <div class="principle">
+          <div class="principle-num">6</div>
+          <div class="principle-content">
+            <h4>Federated, Not Centralized</h4>
+            <p>Each village owns its instance. Cross-village features are opt-in. No single point of failure or control.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2>Why Now?</h2>
+
+    <p>The pandemic proved we need local resilience. The techlash proved we're tired of extraction. The loneliness epidemic proved we need third places and weak ties. The tools exist. The timing is right. The only thing missing is someone willing to build infrastructure instead of platforms.</p>
+
+    <div class="highlight-box">
+      <p><strong>VillageOS isn't an app.</strong> It's the operating system for a village that wants to stay alive. It's roads and streetlights for the digital layer of community life. It's circulation infrastructure for the five flows that keep a place healthy.</p>
+    </div>
+
+    <div class="closing">
+      <h2>Circulation is Life</h2>
+      <p>When money flows, businesses thrive. When people flow, streets feel safe. When information flows, trust builds. When engagement flows, community deepens.</p>
+      <p style="margin-top: 20px;"><strong>Keep things moving.</strong></p>
+      <div class="signature">
+        Harmonic Systems - Kinderhook, NY<br>
+        Building circulation infrastructure for villages that want to stay alive.
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OK Kinderhook - Village Operating System</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --cream: #fefae0;
+      --green-dark: #283618;
+      --green: #606c38;
+      --green-light: #dde5b6;
+      --orange: #bc6c25;
+      --orange-light: #dda15e;
+      --brown: #588157;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      padding: 1rem;
+    }
+
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--cream);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 4px solid var(--green);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    /* Print - B&W ink saving */
+    @media print {
+      @page { size: letter; margin: 0.4in; }
+      body { background: white; padding: 0; }
+      .page { box-shadow: none; border-color: #333; }
+      .concept-box, .library-box, .cost-card { background: #333 !important; }
+      .earn-box { background: #666 !important; }
+      .track { border-color: #999 !important; }
+      h1, h2, h3, h4, .track h3 { color: #000 !important; }
+      .icon svg { stroke: #333 !important; }
+    }
+
+    header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 4px solid var(--green);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .logo-area h1 {
+      font-family: Georgia, serif;
+      font-size: clamp(1.5rem, 5vw, 2rem);
+      font-weight: 700;
+      color: var(--green-dark);
+    }
+
+    .logo-area .subtitle {
+      font-size: 0.8rem;
+      color: var(--green);
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .tagline-badge {
+      background: var(--green-dark);
+      color: var(--cream);
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .content {
+      padding: 1.25rem 1.5rem;
+    }
+
+    .concept-box {
+      background: linear-gradient(135deg, var(--green) 0%, #4a5a2e 100%);
+      color: var(--cream);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .concept-box .icon {
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+    }
+
+    .concept-box .icon svg {
+      width: 100%;
+      height: 100%;
+      stroke: var(--cream);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .concept-box h2 {
+      font-size: 1.1rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .concept-box p {
+      font-size: 0.9rem;
+      opacity: 0.95;
+      line-height: 1.5;
+    }
+
+    h2.section-title {
+      font-size: 1rem;
+      color: var(--green-dark);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .section-title .icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .section-title .icon svg {
+      stroke: var(--orange);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .skill-tracks {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .track {
+      background: white;
+      border-radius: 10px;
+      padding: 1rem;
+      border: 3px solid var(--orange-light);
+      text-align: center;
+    }
+
+    .track.money { border-color: var(--green); }
+    .track.body { border-color: var(--orange); }
+    .track.mind { border-color: var(--green-dark); }
+    .track.earth { border-color: var(--brown); }
+
+    .track .icon {
+      width: 36px;
+      height: 36px;
+      margin: 0 auto 0.5rem;
+    }
+
+    .track .icon svg {
+      width: 100%;
+      height: 100%;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .track.money .icon svg { stroke: var(--green); }
+    .track.body .icon svg { stroke: var(--orange); }
+    .track.mind .icon svg { stroke: var(--green-dark); }
+    .track.earth .icon svg { stroke: var(--brown); }
+
+    .track h3 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .track ul {
+      list-style: none;
+      font-size: 0.8rem;
+      color: #555;
+      text-align: left;
+    }
+
+    .track li {
+      padding: 0.2rem 0;
+      padding-left: 1rem;
+      position: relative;
+    }
+
+    .track li::before {
+      content: ">";
+      position: absolute;
+      left: 0;
+      color: var(--orange);
+      font-weight: bold;
+    }
+
+    .bundles-section {
+      background: #f4f1de;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1.25rem;
+      border: 2px dashed var(--orange);
+    }
+
+    .bundles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .bundle {
+      background: white;
+      border-radius: 8px;
+      padding: 0.85rem;
+      border-left: 4px solid var(--green);
+    }
+
+    .bundle h4 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .bundle h4 .icon {
+      width: 18px;
+      height: 18px;
+    }
+
+    .bundle h4 .icon svg {
+      stroke: var(--green);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .bundle p {
+      font-size: 0.75rem;
+      color: #555;
+      line-height: 1.4;
+    }
+
+    .bundle .reward {
+      margin-top: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--green);
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    @media (min-width: 600px) {
+      .two-col {
+        grid-template-columns: 1.3fr 0.7fr;
+      }
+    }
+
+    .library-box {
+      background: linear-gradient(135deg, var(--green-dark) 0%, #1e2a12 100%);
+      color: var(--cream);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+    }
+
+    .library-box h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .library-box h3 .icon {
+      width: 24px;
+      height: 24px;
+    }
+
+    .library-box h3 .icon svg {
+      stroke: var(--cream);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .library-box ul {
+      list-style: none;
+      font-size: 0.85rem;
+    }
+
+    .library-box li {
+      padding: 0.35rem 0;
+      padding-left: 1.25rem;
+      position: relative;
+      opacity: 0.95;
+    }
+
+    .library-box li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.65rem;
+      width: 6px;
+      height: 6px;
+      background: var(--orange-light);
+      border-radius: 50%;
+    }
+
+    .earn-box {
+      background: linear-gradient(135deg, var(--orange) 0%, #9a5a20 100%);
+      color: white;
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+    }
+
+    .earn-box h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .earn-box h3 .icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .earn-box h3 .icon svg {
+      stroke: white;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .earn-box p {
+      font-size: 0.85rem;
+      line-height: 1.5;
+      opacity: 0.95;
+    }
+
+    .bottom-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    @media (min-width: 650px) {
+      .bottom-row {
+        grid-template-columns: 1fr 1fr auto;
+      }
+    }
+
+    .info-card {
+      background: white;
+      border-radius: 8px;
+      padding: 1rem;
+      border: 2px solid #ddd;
+    }
+
+    .info-card h4 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .info-card h4 .icon {
+      width: 18px;
+      height: 18px;
+    }
+
+    .info-card h4 .icon svg {
+      stroke: var(--orange);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .info-card p {
+      font-size: 0.8rem;
+      color: #555;
+      line-height: 1.5;
+    }
+
+    .cost-card {
+      background: linear-gradient(135deg, var(--green) 0%, #4a5a2e 100%);
+      color: var(--cream);
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .cost-card .amount {
+      font-size: 1.5rem;
+      font-weight: 800;
+    }
+
+    .cost-card .label {
+      font-size: 0.7rem;
+      opacity: 0.9;
+    }
+
+    footer {
+      padding: 1rem 1.5rem;
+      border-top: 2px solid #ddd;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    footer strong {
+      color: var(--green-dark);
+    }
+
+    .icon {
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="logo-area">
+        <h1>OK Kinderhook</h1>
+        <div class="subtitle">Village Operating System</div>
+      </div>
+      <div class="tagline-badge">
+        Use Your Money.<br>
+        Use Your Body.<br>
+        Use Your Mind.
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="concept-box">
+        <span class="icon"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h.01M10 12h.01M14 12h.01M18 12h.01"/><circle cx="12" cy="12" r="2"/></svg></span>
+        <div class="text">
+          <h2>What if our village was a cozy video game?</h2>
+          <p>Build relationships with local shop owners. Complete collections. Follow seasonal storylines. Unlock achievements. The village becomes a game where <em>everyone wins</em> - and the reward is a thriving community.</p>
+        </div>
+      </div>
+
+      <h2 class="section-title">
+        <span class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
+        Four Skill Tracks
+      </h2>
+
+      <div class="skill-tracks">
+        <div class="track money">
+          <span class="icon"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></svg></span>
+          <h3>Commerce</h3>
+          <ul>
+            <li>Shop at local businesses</li>
+            <li>Use Kinderbucks currency</li>
+            <li>Redeem OK Member discounts</li>
+            <li>Build loyalty streaks</li>
+          </ul>
+        </div>
+
+        <div class="track body">
+          <span class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg></span>
+          <h3>Movement</h3>
+          <ul>
+            <li>Walk the rail trail</li>
+            <li>Complete discovery trails</li>
+            <li>Visit village landmarks</li>
+            <li>Join seasonal challenges</li>
+          </ul>
+        </div>
+
+        <div class="track mind">
+          <span class="icon"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></span>
+          <h3>Learning</h3>
+          <ul>
+            <li>Check out library books</li>
+            <li>Attend programs & events</li>
+            <li>Follow history storylines</li>
+            <li>Complete trivia challenges</li>
+          </ul>
+        </div>
+
+        <div class="track earth">
+          <span class="icon"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 11-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg></span>
+          <h3>Stewardship</h3>
+          <ul>
+            <li>Log CLINK! bag returns</li>
+            <li>Participate in cleanups</li>
+            <li>Support sustainability</li>
+            <li>Track community impact</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="bundles-section">
+        <h2 class="section-title">
+          <span class="icon"><svg viewBox="0 0 24 24"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 110-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 100-5C13 2 12 7 12 7z"/></svg></span>
+          Community Bundles - Complete Challenges, Unlock Rewards
+        </h2>
+        <div class="bundles-grid">
+          <div class="bundle">
+            <h4>
+              <span class="icon"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></span>
+              Bookworm Bundle
+            </h4>
+            <p>Check out 10 books + attend 1 library program + complete a history storyline</p>
+            <div class="reward">> Unlock: Library Champion badge + 5 Kinderbucks</div>
+          </div>
+          <div class="bundle">
+            <h4>
+              <span class="icon"><svg viewBox="0 0 24 24"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></span>
+              Explorer Bundle
+            </h4>
+            <p>Visit 8 landmarks + complete rail trail quest + check in at 5 businesses</p>
+            <div class="reward">> Unlock: Village Explorer badge + trail map poster</div>
+          </div>
+          <div class="bundle">
+            <h4>
+              <span class="icon"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
+              Good Neighbor Bundle
+            </h4>
+            <p>Shop at 10 businesses + return 3 CLINK! bags + recruit 1 new member</p>
+            <div class="reward">> Unlock: Kinderhooker pin + 10 Kinderbucks</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="library-box">
+          <h3>
+            <span class="icon"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></span>
+            The Library as Community Hub
+          </h3>
+          <ul>
+            <li><strong>Free training sessions</strong> - Learn to use the app, any age welcome</li>
+            <li><strong>Book checkout integration</strong> - Reading = points toward badges</li>
+            <li><strong>CLINK! bag logging</strong> - Show your recycling, earn credit</li>
+            <li><strong>D&D & gaming crossover</strong> - Partner with programming for quests</li>
+            <li><strong>Physical cards available</strong> - No smartphone? No problem.</li>
+          </ul>
+        </div>
+        <div class="earn-box">
+          <h3>
+            <span class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+            Earn Your Membership
+          </h3>
+          <p>OK Membership isn't just given - it's <strong>earned through movement</strong>. Complete your first challenge to activate full benefits. Start by:</p>
+          <p style="margin-top: 0.5rem;">Visiting 3 businesses / Walking the trail / Checking out a book</p>
+        </div>
+      </div>
+
+      <div class="bottom-row">
+        <div class="info-card">
+          <h4>
+            <span class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span>
+            Radical Transparency
+          </h4>
+          <p>Village-owned data. No corporate tracking. All insights shared openly with residents. A true digital cooperative.</p>
+        </div>
+        <div class="info-card">
+          <h4>
+            <span class="icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></span>
+            For All Ages & Abilities
+          </h4>
+          <p>Library demos. Physical cards. Large print. We meet everyone where they are. Technology serves people.</p>
+        </div>
+        <div class="cost-card">
+          <div class="amount">~$1,500</div>
+          <div class="label">to launch<br>free to operate</div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <span><strong>Columbia County's oldest village.</strong> Now with its own operating system.</span>
+      <span><strong>David Nyman</strong> / Kinderhook Resident / Building this for free</span>
+    </footer>
+  </div>
+</body>
+</html>

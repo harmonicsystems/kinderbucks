@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VillageOS - Tourism Infrastructure for Small Towns</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --green: #4ade80;
+      --cyan: #22d3ee;
+      --purple: #a78bfa;
+      --red: #f87171;
+      --bg-dark: #0f0f1a;
+      --bg-card: rgba(255,255,255,0.03);
+      --border: rgba(255,255,255,0.1);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: linear-gradient(135deg, var(--bg-dark) 0%, #1a1a2e 100%);
+      min-height: 100vh;
+      color: #e0e0e0;
+      line-height: 1.6;
+    }
+
+    /* Print styles */
+    @media print {
+      body { background: #1a1a2e; }
+      .container { padding: 0.5in; }
+      section { break-inside: avoid; }
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: clamp(2rem, 6vw, 3.75rem) clamp(1rem, 4vw, 1.5rem);
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: clamp(2rem, 6vw, 3.75rem);
+    }
+
+    .logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.5rem, 8vw, 3rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--green) 0%, var(--cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+
+    .tagline {
+      font-size: clamp(1rem, 3vw, 1.35rem);
+      color: #a0a0a0;
+      font-weight: 400;
+    }
+
+    .hero-statement {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: clamp(1.5rem, 4vw, 2rem);
+      margin-bottom: clamp(2rem, 5vw, 3rem);
+      text-align: center;
+    }
+
+    .hero-statement p {
+      font-size: clamp(1rem, 3vw, 1.25rem);
+      color: #c0c0c0;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .hero-statement strong {
+      color: var(--green);
+    }
+
+    section {
+      margin-bottom: clamp(2rem, 5vw, 3rem);
+    }
+
+    h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.25rem, 4vw, 1.75rem);
+      color: #fff;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    h2 .icon {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+
+    h2 .icon svg {
+      width: 100%;
+      height: 100%;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .problem-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+
+    .problem-card {
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+
+    .problem-card h3 {
+      font-size: 0.95rem;
+      color: var(--red);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .problem-card h3 .icon {
+      width: 18px;
+      height: 18px;
+    }
+
+    .problem-card h3 .icon svg {
+      stroke: var(--red);
+    }
+
+    .problem-card p {
+      font-size: 0.85rem;
+      color: #a0a0a0;
+    }
+
+    .solution-box {
+      background: rgba(74, 222, 128, 0.08);
+      border: 1px solid rgba(74, 222, 128, 0.25);
+      border-radius: 16px;
+      padding: clamp(1.25rem, 4vw, 1.75rem);
+    }
+
+    .solution-box p {
+      font-size: clamp(0.9rem, 2.5vw, 1rem);
+      color: #c0c0c0;
+      margin-bottom: 1rem;
+    }
+
+    .solution-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .solution-box strong {
+      color: var(--green);
+    }
+
+    .layers {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+    }
+
+    .layer {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1rem;
+      text-align: center;
+    }
+
+    .layer .layer-icon {
+      width: 36px;
+      height: 36px;
+      margin: 0 auto 0.75rem;
+    }
+
+    .layer .layer-icon svg {
+      width: 100%;
+      height: 100%;
+      stroke: var(--cyan);
+      stroke-width: 1.5;
+      fill: none;
+    }
+
+    .layer h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+
+    .layer p {
+      font-size: 0.75rem;
+      color: #888;
+      line-height: 1.4;
+    }
+
+    .how-it-works {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: clamp(1.5rem, 4vw, 2rem);
+    }
+
+    .step-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .step {
+      text-align: center;
+    }
+
+    .step-number {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--green) 0%, var(--cyan) 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--bg-dark);
+      margin: 0 auto 0.75rem;
+    }
+
+    .step h4 {
+      font-size: 0.9rem;
+      color: #fff;
+      margin-bottom: 0.35rem;
+    }
+
+    .step p {
+      font-size: 0.75rem;
+      color: #888;
+      line-height: 1.4;
+    }
+
+    .market-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .market-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+
+    .market-box h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      color: var(--cyan);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .market-box h3 .icon {
+      width: 18px;
+      height: 18px;
+    }
+
+    .market-box h3 .icon svg {
+      stroke: var(--cyan);
+    }
+
+    .market-box ul {
+      list-style: none;
+    }
+
+    .market-box li {
+      font-size: 0.85rem;
+      color: #a0a0a0;
+      padding: 0.35rem 0;
+      padding-left: 1.25rem;
+      position: relative;
+    }
+
+    .market-box li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.7rem;
+      width: 0;
+      height: 0;
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+      border-left: 6px solid var(--green);
+    }
+
+    .pricing-model {
+      background: linear-gradient(135deg, rgba(74, 222, 128, 0.08) 0%, rgba(34, 211, 238, 0.08) 100%);
+      border: 1px solid rgba(74, 222, 128, 0.25);
+      border-radius: 16px;
+      padding: clamp(1.5rem, 4vw, 2rem);
+    }
+
+    .pricing-model > p {
+      color: #a0a0a0;
+      font-size: 0.9rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .pricing-tiers {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .tier {
+      background: rgba(0,0,0,0.3);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .tier h4 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.1rem;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+
+    .tier .price {
+      font-size: clamp(1.75rem, 5vw, 2rem);
+      font-weight: 700;
+      color: var(--green);
+      margin-bottom: 0.25rem;
+    }
+
+    .tier .period {
+      font-size: 0.75rem;
+      color: #666;
+      margin-bottom: 1rem;
+    }
+
+    .tier ul {
+      list-style: none;
+      text-align: left;
+    }
+
+    .tier li {
+      font-size: 0.8rem;
+      color: #a0a0a0;
+      padding: 0.25rem 0;
+      padding-left: 1.25rem;
+      position: relative;
+    }
+
+    .tier li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.55rem;
+      width: 12px;
+      height: 6px;
+      border-left: 2px solid var(--green);
+      border-bottom: 2px solid var(--green);
+      transform: rotate(-45deg);
+    }
+
+    .differentiator {
+      background: rgba(139, 92, 246, 0.08);
+      border: 1px solid rgba(139, 92, 246, 0.25);
+      border-radius: 16px;
+      padding: clamp(1.25rem, 4vw, 1.75rem);
+    }
+
+    .differentiator > p {
+      color: #c0c0c0;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .diff-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .diff-item h4 {
+      font-size: 0.9rem;
+      color: var(--purple);
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .diff-item h4 .icon {
+      width: 16px;
+      height: 16px;
+    }
+
+    .diff-item h4 .icon svg {
+      stroke: var(--purple);
+    }
+
+    .diff-item p {
+      font-size: 0.85rem;
+      color: #888;
+    }
+
+    .proof-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: clamp(1.5rem, 4vw, 2rem);
+      text-align: center;
+    }
+
+    .proof-section h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.15rem;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+
+    .proof-section .location {
+      font-size: 1rem;
+      color: var(--green);
+      margin-bottom: 1rem;
+    }
+
+    .proof-section p {
+      font-size: 0.9rem;
+      color: #888;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .cta {
+      text-align: center;
+      padding: clamp(2rem, 5vw, 3rem) 0;
+    }
+
+    .cta h2 {
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .cta p {
+      font-size: 1.1rem;
+      color: #888;
+      margin-bottom: 1.5rem;
+    }
+
+    .cta-button {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--green) 0%, var(--cyan) 100%);
+      color: var(--bg-dark);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 0.85rem 2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(74, 222, 128, 0.3);
+    }
+
+    .footer-note {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #555;
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">VillageOS</div>
+      <div class="tagline">Tourism infrastructure for small towns</div>
+    </header>
+
+    <div class="hero-statement">
+      <p><strong>SaaS for people who don't know how to open a PDF.</strong><br>
+      We add data layers to your village with zero technical setup—QR codes, loyalty systems, local currency, visitor analytics—all managed for you.</p>
+    </div>
+
+    <section>
+      <h2>
+        <span class="icon"><svg viewBox="0 0 24 24" stroke="#f87171"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+        The Problem
+      </h2>
+      <div class="problem-grid">
+        <div class="problem-card">
+          <h3>
+            <span class="icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></span>
+            Tourism dollars leak
+          </h3>
+          <p>Visitors come, walk around, leave. No capture. No data. No return visits. Money flows to Airbnb and Amazon, not Main Street.</p>
+        </div>
+        <div class="problem-card">
+          <h3>
+            <span class="icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
+            No digital infrastructure
+          </h3>
+          <p>Big cities have apps, maps, loyalty programs. Small towns have... a Facebook page from 2016 and a paper brochure at the gas station.</p>
+        </div>
+        <div class="problem-card">
+          <h3>
+            <span class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></span>
+            Tech is intimidating
+          </h3>
+          <p>Local business owners aren't developers. They can't build apps. They shouldn't have to.</p>
+        </div>
+        <div class="problem-card">
+          <h3>
+            <span class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 006 0v-1a10 10 0 10-3.92 7.94"/></svg></span>
+            No collective intelligence
+          </h3>
+          <p>Each business is an island. No one knows where visitors go, what they want, or how to bring them back.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>
+        <span class="icon"><svg viewBox="0 0 24 24" stroke="#4ade80"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></span>
+        The Solution
+      </h2>
+      <div class="solution-box">
+        <p><strong>VillageOS is a managed operating system for small-town tourism.</strong></p>
+        <p>We deploy a complete digital layer—loyalty cards, QR-code check-ins, local currency, visitor tracking, gamified exploration—and we run it for you. Your job: hang posters and give discounts. Our job: everything else.</p>
+        <p><strong>Think of it as Shopify for villages.</strong> You don't build the infrastructure. You just use it.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>
+        <span class="icon"><svg viewBox="0 0 24 24" stroke="#22d3ee"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span>
+        Data Layers We Deploy
+      </h2>
+      <div class="layers">
+        <div class="layer">
+          <span class="layer-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+          <h3>Loyalty Layer</h3>
+          <p>Resident discount cards. Visitor passes. Tiered rewards. Streaks and badges.</p>
+        </div>
+        <div class="layer">
+          <span class="layer-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+          <h3>Location Layer</h3>
+          <p>QR codes at landmarks, trails, businesses. Check-ins that build a map of movement.</p>
+        </div>
+        <div class="layer">
+          <span class="layer-icon"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></svg></span>
+          <h3>Currency Layer</h3>
+          <p>Local currency (physical or digital). Keeps dollars circulating. 2-3x multiplier effect.</p>
+        </div>
+        <div class="layer">
+          <span class="layer-icon"><svg viewBox="0 0 24 24"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 01-9 9"/></svg></span>
+          <h3>Game Layer</h3>
+          <p>Scavenger hunts. Seasonal quests. Collectible badges. Completionist bundles.</p>
+        </div>
+        <div class="layer">
+          <span class="layer-icon"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></span>
+          <h3>Content Layer</h3>
+          <p>History tours. Nature guides. Story unlocks. Every QR is a portal to context.</p>
+        </div>
+        <div class="layer">
+          <span class="layer-icon"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg></span>
+          <h3>Analytics Layer</h3>
+          <p>Foot traffic patterns. Popular routes. Return visit rates. Shared openly with the village.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>
+        <span class="icon"><svg viewBox="0 0 24 24" stroke="#4ade80"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+        How It Works
+      </h2>
+      <div class="how-it-works">
+        <div class="step-grid">
+          <div class="step">
+            <div class="step-number">1</div>
+            <h4>We Visit</h4>
+            <p>30-minute call to understand your village, businesses, landmarks, vibe</p>
+          </div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <h4>We Build</h4>
+            <p>Custom-branded portal, QR codes, cards, signage—delivered ready to deploy</p>
+          </div>
+          <div class="step">
+            <div class="step-number">3</div>
+            <h4>You Launch</h4>
+            <p>Hang the posters. Hand out the cards. We handle everything digital.</p>
+          </div>
+          <div class="step">
+            <div class="step-number">4</div>
+            <h4>We Maintain</h4>
+            <p>Updates, seasonal content, analytics reports, support—ongoing, forever</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>
+        <span class="icon"><svg viewBox="0 0 24 24" stroke="#22d3ee"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></span>
+        Target Market
+      </h2>
+      <div class="market-section">
+        <div class="market-box">
+          <h3>
+            <span class="icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+            Ideal Villages
+          </h3>
+          <ul>
+            <li>Population 500–5,000</li>
+            <li>Tourism-adjacent (day trips, weekend visits)</li>
+            <li>Historic character or natural attractions</li>
+            <li>Active business association or chamber</li>
+            <li>Local pride, community identity</li>
+          </ul>
+        </div>
+        <div class="market-box">
+          <h3>
+            <span class="icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+            Initial Regions
+          </h3>
+          <ul>
+            <li>Hudson Valley, NY (50+ villages)</li>
+            <li>Berkshires, MA (BerkShares precedent)</li>
+            <li>Vermont villages (tourism economy)</li>
+            <li>Catskills (emerging destination)</li>
+            <li>Connecticut River Valley</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>
+        <span class="icon"><svg viewBox="0 0 24 24" stroke="#4ade80"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></span>
+        Pricing Model
+      </h2>
+      <div class="pricing-model">
+        <p>Simple, predictable pricing. No per-transaction fees. No surprise costs.</p>
+        <div class="pricing-tiers">
+          <div class="tier">
+            <h4>Starter</h4>
+            <div class="price">$99</div>
+            <div class="period">/month</div>
+            <ul>
+              <li>Up to 10 businesses</li>
+              <li>Loyalty cards + QR check-ins</li>
+              <li>Basic analytics</li>
+              <li>Email support</li>
+            </ul>
+          </div>
+          <div class="tier">
+            <h4>Village</h4>
+            <div class="price">$249</div>
+            <div class="period">/month</div>
+            <ul>
+              <li>Up to 30 businesses</li>
+              <li>Local currency system</li>
+              <li>Gamification layer</li>
+              <li>Seasonal content updates</li>
+              <li>Monthly analytics calls</li>
+            </ul>
+          </div>
+          <div class="tier">
+            <h4>Region</h4>
+            <div class="price">$499</div>
+            <div class="period">/month</div>
+            <ul>
+              <li>Unlimited businesses</li>
+              <li>Multi-village network</li>
+              <li>Custom integrations</li>
+              <li>Dedicated support</li>
+              <li>White-label option</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>
+        <span class="icon"><svg viewBox="0 0 24 24" stroke="#a78bfa"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+        Why This, Why Now
+      </h2>
+      <div class="differentiator">
+        <p>The post-COVID tourism boom is real, but small towns are losing to platforms. They need infrastructure—but can't build it themselves.</p>
+        <div class="diff-grid">
+          <div class="diff-item">
+            <h4>
+              <span class="icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></span>
+              Managed, not self-serve
+            </h4>
+            <p>We don't give you software to figure out. We run it for you. That's the whole point.</p>
+          </div>
+          <div class="diff-item">
+            <h4>
+              <span class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg></span>
+              Gamification baked in
+            </h4>
+            <p>Not just a directory. Behavioral design that makes local shopping sticky and fun.</p>
+          </div>
+          <div class="diff-item">
+            <h4>
+              <span class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+              Physical + digital
+            </h4>
+            <p>Cards work without smartphones. QR codes add a layer, but aren't required.</p>
+          </div>
+          <div class="diff-item">
+            <h4>
+              <span class="icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+              Community-owned data
+            </h4>
+            <p>Analytics belong to the village, not us. Radical transparency, not extraction.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>
+        <span class="icon"><svg viewBox="0 0 24 24" stroke="#4ade80"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg></span>
+        Proof of Concept
+      </h2>
+      <div class="proof-section">
+        <h3>Live Pilot: OK Kinderhook</h3>
+        <div class="location">Kinderhook, NY — Birthplace of "OK"</div>
+        <p>Currently deploying full VillageOS stack in a village of ~1,200. Loyalty cards, Kinderbucks local currency, $8 Van Buren meme bill, QR scavenger hunts, library partnership. Building in public. Results by Q2 2026.</p>
+      </div>
+    </section>
+
+    <div class="cta">
+      <h2>Ready to give your village an operating system?</h2>
+      <p>Let's talk about what VillageOS can do for your community.</p>
+      <a href="mailto:david@harmonicsystems.io" class="cta-button">Get in Touch</a>
+    </div>
+
+    <div class="footer-note">
+      VillageOS is a product of Harmonic Systems · Built in Kinderhook, NY
+    </div>
+  </div>
+</body>
+</html>

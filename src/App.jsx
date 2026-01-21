@@ -23,8 +23,13 @@ import AdminMembers from './pages/AdminMembers'
 import AdminUsers from './pages/AdminUsers'
 import AdminBusinessDetail from './pages/AdminBusinessDetail'
 import AdminRedemptions from './pages/AdminRedemptions'
+import AdminLandmarks from './pages/AdminLandmarks'
+import AdminHunts from './pages/AdminHunts'
 import AcceptPayment from './pages/AcceptPayment'
 import VillageMapPage from './pages/VillageMap'
+import Hunts from './pages/Hunts'
+import LandmarkScan from './pages/LandmarkScan'
+import Pitch from './pages/Pitch'
 import './App.css'
 
 function App() {
@@ -42,10 +47,17 @@ function App() {
           <Route path="/exchange" element={<Exchange />} />
           <Route path="/login" element={<Login />} />
 
+          {/* Secret Pitch Room (not linked in nav) */}
+          <Route path="/pitch" element={<Pitch />} />
+
           {/* Member Pages */}
           <Route path="/account" element={<Account />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/card" element={<MyCard />} />
+
+          {/* Scavenger Hunts */}
+          <Route path="/hunts" element={<Hunts />} />
+          <Route path="/landmark/:landmarkCode" element={<LandmarkScan />} />
 
           {/* Verification & Check-in */}
           <Route path="/scan/:serial" element={<Scan />} />
@@ -107,6 +119,16 @@ function App() {
           <Route path="/admin/redemptions" element={
             <ProtectedRoute allowedRoles={['admin']}>
               <AdminRedemptions />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/landmarks" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminLandmarks />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/hunts" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminHunts />
             </ProtectedRoute>
           } />
         </Routes>

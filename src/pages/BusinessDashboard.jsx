@@ -33,7 +33,7 @@ import {
   Gift
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
-import { getBusinessWithBalance, getAllBusinesses, updateBusinessLoyaltyRewards, updateBusinessCrossRewards } from '../firebase/businesses'
+import { getBusinessWithBalance, getAllBusinesses, updateBusinessLoyaltyRewards, updateBusinessCrossRewards, updateBusinessOKDiscount, updateBusinessKBSpecials } from '../firebase/businesses'
 import { getCheckinsByBusiness, getAllCheckins } from '../firebase/checkins'
 import { getBusinessPromoCodes, createPromoCode, togglePromoCodeActive, deletePromoCode } from '../firebase/promoCodes'
 import { getBusinessTransactions } from '../firebase/transactions'
@@ -89,6 +89,13 @@ function BusinessDashboard() {
   })
   const [savingCrossReward, setSavingCrossReward] = useState(false)
 
+  // OK Member discount state
+  const [okDiscount, setOkDiscount] = useState('')
+  const [kbSpecials, setKbSpecials] = useState([])
+  const [showKbSpecialForm, setShowKbSpecialForm] = useState(false)
+  const [kbSpecialForm, setKbSpecialForm] = useState({ amount: 5, description: '' })
+  const [savingDiscount, setSavingDiscount] = useState(false)
+
   const loadData = async () => {
     if (!profile?.businessCode) {
       setLoading(false)
@@ -113,6 +120,8 @@ function BusinessDashboard() {
       setTransactions(txnData)
       setLoyaltyRewards(bizData?.loyaltyRewards || [])
       setCrossRewards(bizData?.crossRewards || [])
+      setOkDiscount(bizData?.okMemberDiscount || '')
+      setKbSpecials(bizData?.kinderbucksSpecials || [])
     } catch (err) {
       console.error('Error loading business data:', err)
     }
@@ -316,6 +325,49 @@ function BusinessDashboard() {
     )
     await updateBusinessCrossRewards(profile.businessCode, updatedRewards)
     setCrossRewards(updatedRewards)
+  }
+
+  // OK Member Discount handlers
+  const handleSaveOkDiscount = async (e) => {
+    e.preventDefault()
+    setSavingDiscount(true)
+    try {
+      await updateBusinessOKDiscount(profile.businessCode, okDiscount)
+    } catch (err) {
+      console.error('Error saving OK discount:', err)
+      alert('Error saving discount')
+    }
+    setSavingDiscount(false)
+  }
+
+  const handleAddKbSpecial = async (e) => {
+    e.preventDefault()
+    if (!kbSpecialForm.description) return
+
+    const newSpecials = [
+      ...kbSpecials,
+      { amount: parseInt(kbSpecialForm.amount), description: kbSpecialForm.description }
+    ]
+
+    try {
+      await updateBusinessKBSpecials(profile.businessCode, newSpecials)
+      setKbSpecials(newSpecials)
+      setKbSpecialForm({ amount: 5, description: '' })
+      setShowKbSpecialForm(false)
+    } catch (err) {
+      console.error('Error adding KB special:', err)
+      alert('Error adding special')
+    }
+  }
+
+  const handleRemoveKbSpecial = async (index) => {
+    const newSpecials = kbSpecials.filter((_, i) => i !== index)
+    try {
+      await updateBusinessKBSpecials(profile.businessCode, newSpecials)
+      setKbSpecials(newSpecials)
+    } catch (err) {
+      console.error('Error removing KB special:', err)
+    }
   }
 
   if (loading) {
@@ -1208,20 +1260,168 @@ function BusinessDashboard() {
 
           {/* Loyalty Rewards Tab */}
           {activeTab === 'loyalty' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="card"
-            >
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: '1.5rem',
-              }}>
-                <h3 style={{ color: 'var(--kb-navy)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <Gift size={20} /> Loyalty Rewards
+            <>
+              {/* OK Member Discount Section */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="card"
+                style={{ marginBottom: '1.5rem' }}
+              >
+                <h3 style={{ color: 'var(--kb-navy)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Award size={20} color="var(--kb-gold)" /> OK Member Discount
                 </h3>
+                <p style={{ color: 'var(--kb-gray-600)', marginBottom: '1rem', fontSize: '0.9rem' }}>
+                  Set the discount OK Members receive when they show their card at your business.
+                </p>
+
+                <form onSubmit={handleSaveOkDiscount} style={{
+                  display: 'flex',
+                  gap: '0.75rem',
+                  alignItems: 'flex-end',
+                  flexWrap: 'wrap',
+                }}>
+                  <div style={{ flex: 1, minWidth: '200px' }}>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', color: 'var(--kb-gray-600)' }}>
+                      Discount Description
+                    </label>
+                    <input
+                      type="text"
+                      value={okDiscount}
+                      onChange={e => setOkDiscount(e.target.value)}
+                      placeholder="e.g., 10% off all purchases"
+                      style={{ width: '100%' }}
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="btn btn-gold"
+                    disabled={savingDiscount}
+                    style={{ whiteSpace: 'nowrap' }}
+                  >
+                    {savingDiscount ? 'Saving...' : 'Save Discount'}
+                  </button>
+                </form>
+              </motion.div>
+
+              {/* Kinderbucks Specials Section */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="card"
+                style={{ marginBottom: '1.5rem' }}
+              >
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: '0.5rem',
+                }}>
+                  <h3 style={{ color: 'var(--kb-navy)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Banknote size={20} color="#2563eb" /> Kinderbucks Specials
+                  </h3>
+                  <button
+                    onClick={() => setShowKbSpecialForm(!showKbSpecialForm)}
+                    className="btn btn-secondary"
+                    style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                  >
+                    <Plus size={16} /> Add Special
+                  </button>
+                </div>
+                <p style={{ color: 'var(--kb-gray-600)', marginBottom: '1rem', fontSize: '0.9rem' }}>
+                  Create special offers exclusively for Kinderbucks customers.
+                </p>
+
+                {showKbSpecialForm && (
+                  <form onSubmit={handleAddKbSpecial} style={{
+                    padding: '1rem',
+                    background: 'var(--kb-gray-50)',
+                    borderRadius: '8px',
+                    marginBottom: '1rem',
+                  }}>
+                    <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-end', flexWrap: 'wrap' }}>
+                      <div style={{ width: '100px' }}>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', color: 'var(--kb-gray-600)' }}>
+                          KB Amount
+                        </label>
+                        <input
+                          type="number"
+                          min="1"
+                          value={kbSpecialForm.amount}
+                          onChange={e => setKbSpecialForm(f => ({ ...f, amount: e.target.value }))}
+                          style={{ width: '100%' }}
+                          required
+                        />
+                      </div>
+                      <div style={{ flex: 1, minWidth: '200px' }}>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', color: 'var(--kb-gray-600)' }}>
+                          What They Get
+                        </label>
+                        <input
+                          type="text"
+                          value={kbSpecialForm.description}
+                          onChange={e => setKbSpecialForm(f => ({ ...f, description: e.target.value }))}
+                          placeholder="e.g., Coffee + pastry"
+                          style={{ width: '100%' }}
+                          required
+                        />
+                      </div>
+                      <button type="submit" className="btn btn-primary">Add</button>
+                      <button type="button" className="btn btn-secondary" onClick={() => setShowKbSpecialForm(false)}>Cancel</button>
+                    </div>
+                  </form>
+                )}
+
+                {kbSpecials.length === 0 ? (
+                  <p style={{ color: 'var(--kb-gray-400)', fontStyle: 'italic' }}>
+                    No Kinderbucks specials yet. Add one to attract KB customers!
+                  </p>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    {kbSpecials.map((special, idx) => (
+                      <div key={idx} style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '0.75rem 1rem',
+                        background: 'rgba(37, 99, 235, 0.08)',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(37, 99, 235, 0.2)',
+                      }}>
+                        <div>
+                          <span style={{ fontWeight: '700', color: '#2563eb' }}>{special.amount} KB</span>
+                          <span style={{ color: 'var(--kb-gray-600)' }}> = {special.description}</span>
+                        </div>
+                        <button
+                          onClick={() => handleRemoveKbSpecial(idx)}
+                          className="btn"
+                          style={{ padding: '0.4rem', background: '#e74c3c', color: 'white' }}
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </motion.div>
+
+              {/* Loyalty Rewards Section */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="card"
+              >
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: '1.5rem',
+                }}>
+                  <h3 style={{ color: 'var(--kb-navy)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Gift size={20} /> Check-in Rewards
+                  </h3>
                 <button
                   onClick={() => setShowLoyaltyForm(!showLoyaltyForm)}
                   className="btn btn-gold"
@@ -1663,6 +1863,7 @@ function BusinessDashboard() {
                 </p>
               </div>
             </motion.div>
+            </>
           )}
 
           {/* Promo Codes Tab */}

@@ -29,15 +29,16 @@ function Footer() {
               color: 'var(--kb-navy)',
               fontFamily: 'var(--font-display)',
               fontWeight: '700',
+              fontSize: '0.75rem',
             }}>
-              K
+              OK
             </div>
             <span style={{ fontFamily: 'var(--font-display)', fontWeight: '600', fontSize: '1.1rem' }}>
-              Kinderbucks
+              OK Kinderhook
             </span>
           </div>
           <p style={{ color: 'var(--kb-gray-300)', fontSize: '0.9rem', lineHeight: 1.6 }}>
-            Village of Kinderhook's local currency program. Supporting local businesses, strengthening community.
+            Columbia County's oldest village. Your newest reason to shop local.
           </p>
           <p style={{ color: 'var(--kb-gray-500)', fontSize: '0.8rem', marginTop: '1rem' }}>
             Est. 2026
@@ -94,7 +95,7 @@ function Footer() {
         gap: '1rem',
       }}>
         <p style={{ color: 'var(--kb-gray-500)', fontSize: '0.8rem' }}>
-          © 2026 Kinderbucks. A Harmonic Systems project.
+          © 2026 OK Kinderhook. A Harmonic Systems project.
         </p>
         <div style={{ display: 'flex', gap: '1.5rem' }}>
           <Link to="/admin/dashboard" style={{ color: 'var(--kb-gray-500)', fontSize: '0.8rem' }}>Admin</Link>

@@ -138,7 +138,7 @@ function Login() {
             {/* Title */}
             <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
               <h2 style={{ color: 'var(--kb-navy)', marginBottom: '0.5rem' }}>
-                {mode === 'login' ? 'Welcome Back' : 'Join Kinderbucks'}
+                {mode === 'login' ? 'Welcome Back' : 'Join OK Kinderhook'}
               </h2>
               <p style={{ color: 'var(--kb-gray-500)', fontSize: '0.95rem' }}>
                 {mode === 'login'

@@ -345,6 +345,63 @@ function VillageMapPage() {
                       </a>
                     )}
 
+                    {/* OK Member Discount */}
+                    {biz.okMemberDiscount && (
+                      <div style={{
+                        background: 'rgba(201, 162, 39, 0.1)',
+                        border: '1px solid var(--kb-gold)',
+                        borderRadius: '8px',
+                        padding: '0.6rem 0.75rem',
+                        marginBottom: '0.5rem',
+                      }}>
+                        <div style={{
+                          fontSize: '0.7rem',
+                          fontWeight: '600',
+                          color: 'var(--kb-gold-dark)',
+                          textTransform: 'uppercase',
+                          marginBottom: '0.15rem',
+                        }}>
+                          OK Member Discount
+                        </div>
+                        <div style={{
+                          fontSize: '0.9rem',
+                          fontWeight: '600',
+                          color: 'var(--kb-navy)',
+                        }}>
+                          {biz.okMemberDiscount}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Kinderbucks Specials */}
+                    {biz.kinderbucksSpecials && biz.kinderbucksSpecials.length > 0 && (
+                      <div style={{
+                        background: 'rgba(37, 99, 235, 0.08)',
+                        border: '1px solid rgba(37, 99, 235, 0.3)',
+                        borderRadius: '8px',
+                        padding: '0.6rem 0.75rem',
+                        marginBottom: '0.5rem',
+                      }}>
+                        <div style={{
+                          fontSize: '0.7rem',
+                          fontWeight: '600',
+                          color: '#2563eb',
+                          textTransform: 'uppercase',
+                          marginBottom: '0.25rem',
+                        }}>
+                          Kinderbucks Special
+                        </div>
+                        {biz.kinderbucksSpecials.map((special, idx) => (
+                          <div key={idx} style={{
+                            fontSize: '0.85rem',
+                            color: 'var(--kb-navy)',
+                          }}>
+                            <strong>{special.amount} KB</strong> = {special.description}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
                     {biz.website && (
                       <a
                         href={biz.website}
