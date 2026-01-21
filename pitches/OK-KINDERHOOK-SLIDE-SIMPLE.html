@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OK Kinderhook - How It Works</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Georgia&family=Inter:wght@400;600;700;800&display=swap');
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: linear-gradient(135deg, #1a3a1a 0%, #2d5a2d 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .slide {
+      width: 960px;
+      height: 540px;
+      background: white;
+      border-radius: 12px;
+      padding: 36px 44px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+    }
+    
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 3px solid #2B5F2F;
+    }
+    
+    h1 {
+      font-family: Georgia, serif;
+      font-size: 36px;
+      font-weight: 700;
+      color: #1a3a1a;
+    }
+    
+    .subtitle {
+      font-size: 16px;
+      color: #666;
+      margin-top: 2px;
+    }
+    
+    .cost-callout {
+      text-align: right;
+    }
+    
+    .cost-callout .amount {
+      font-size: 28px;
+      font-weight: 800;
+      color: #1a3a1a;
+    }
+    
+    .cost-callout .label {
+      font-size: 13px;
+      color: #666;
+    }
+    
+    .main-content {
+      display: flex;
+      gap: 30px;
+      flex: 1;
+    }
+    
+    .steps {
+      flex: 1.1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 12px 16px;
+      background: #f8faf8;
+      border-radius: 10px;
+      border-left: 5px solid #2B5F2F;
+    }
+    
+    .step-icon {
+      font-size: 26px;
+      line-height: 1;
+    }
+    
+    .step-text h3 {
+      font-size: 17px;
+      font-weight: 700;
+      color: #1a3a1a;
+      margin-bottom: 2px;
+    }
+    
+    .step-text p {
+      font-size: 14px;
+      color: #444;
+      line-height: 1.35;
+    }
+    
+    .familiar {
+      font-style: italic;
+      color: #666;
+      font-size: 13px;
+    }
+    
+    .sidebar {
+      flex: 0.6;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    
+    .info-box {
+      background: #f0f7f0;
+      border-radius: 10px;
+      padding: 16px;
+    }
+    
+    .info-box h4 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1a3a1a;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .info-box ul {
+      list-style: none;
+      font-size: 13px;
+      color: #333;
+    }
+    
+    .info-box li {
+      padding: 4px 0;
+      padding-left: 20px;
+      position: relative;
+    }
+    
+    .info-box li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #2B5F2F;
+      font-weight: bold;
+    }
+    
+    .no-phone-box {
+      background: #2B5F2F;
+      color: white;
+      border-radius: 10px;
+      padding: 14px 16px;
+      text-align: center;
+    }
+    
+    .no-phone-box .icon {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+    
+    .no-phone-box p {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    .no-phone-box .small {
+      font-size: 12px;
+      opacity: 0.9;
+      font-weight: 400;
+      margin-top: 4px;
+    }
+    
+    footer {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 2px solid #eee;
+      text-align: center;
+    }
+    
+    footer p {
+      font-size: 16px;
+      color: #333;
+    }
+    
+    footer strong {
+      color: #1a3a1a;
+    }
+    
+    @media print {
+      body { background: white; padding: 0; }
+      .slide { box-shadow: none; border: 1px solid #ddd; }
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <header>
+      <div>
+        <h1>OK Kinderhook</h1>
+        <div class="subtitle">A Village Loyalty Program</div>
+      </div>
+      <div class="cost-callout">
+        <div class="amount">~$1,500</div>
+        <div class="label">to launch • free to operate</div>
+      </div>
+    </header>
+    
+    <div class="main-content">
+      <div class="steps">
+        <div class="step">
+          <div class="step-icon">🎫</div>
+          <div class="step-text">
+            <h3>1. Member Discounts</h3>
+            <p>Village residents get an OK Member card. Show it for discounts at local businesses.</p>
+            <div class="familiar">Like a AAA card for Kinderhook.</div>
+          </div>
+        </div>
+        
+        <div class="step">
+          <div class="step-icon">📋</div>
+          <div class="step-text">
+            <h3>2. Visit Tracking</h3>
+            <p>Each visit gets recorded. See which shops you've supported this month.</p>
+            <div class="familiar">Like a digital punch card.</div>
+          </div>
+        </div>
+        
+        <div class="step">
+          <div class="step-icon">⭐</div>
+          <div class="step-text">
+            <h3>3. Earn Rewards</h3>
+            <p>Visit regularly, earn badges. Complete challenges, earn bonuses.</p>
+            <div class="familiar">Like frequent flyer miles for Main Street.</div>
+          </div>
+        </div>
+        
+        <div class="step">
+          <div class="step-icon">💵</div>
+          <div class="step-text">
+            <h3>4. Kinderbucks Currency</h3>
+            <p>Physical local dollars accepted at participating businesses. Special deals for Kinderbucks holders.</p>
+            <div class="familiar">Like BerkShares in the Berkshires.</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="sidebar">
+        <div class="info-box">
+          <h4>📍 For Businesses</h4>
+          <ul>
+            <li>Free to participate</li>
+            <li>Set your own discounts</li>
+            <li>See visit patterns</li>
+            <li>Joint promotions with neighbors</li>
+          </ul>
+        </div>
+        
+        <div class="info-box">
+          <h4>👥 For Residents</h4>
+          <ul>
+            <li>Free membership</li>
+            <li>Discounts at local shops</li>
+            <li>Fun challenges & rewards</li>
+            <li>Support your neighbors</li>
+          </ul>
+        </div>
+        
+        <div class="no-phone-box">
+          <div class="icon">👍</div>
+          <p>No Smartphone? No Problem.</p>
+          <div class="small">Physical card works everywhere.<br>Phone is optional.</div>
+        </div>
+      </div>
+    </div>
+    
+    <footer>
+      <p><strong>Simple idea:</strong> Make it easy and rewarding to shop in the village you call home.</p>
+    </footer>
+  </div>
+</body>
+</html>
