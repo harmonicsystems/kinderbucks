@@ -33,7 +33,7 @@ import {
   Gift
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
-import { getBusinessWithBalance, getAllBusinesses, updateBusinessLoyaltyRewards } from '../firebase/businesses'
+import { getBusinessWithBalance, getAllBusinesses, updateBusinessLoyaltyRewards, updateBusinessCrossRewards } from '../firebase/businesses'
 import { getCheckinsByBusiness, getAllCheckins } from '../firebase/checkins'
 import { getBusinessPromoCodes, createPromoCode, togglePromoCodeActive, deletePromoCode } from '../firebase/promoCodes'
 import { getBusinessTransactions } from '../firebase/transactions'
@@ -77,6 +77,17 @@ function BusinessDashboard() {
     rewardValue: 10
   })
   const [savingLoyalty, setSavingLoyalty] = useState(false)
+  // Cross-business (partner) rewards state
+  const [crossRewards, setCrossRewards] = useState([])
+  const [showCrossRewardForm, setShowCrossRewardForm] = useState(false)
+  const [crossRewardForm, setCrossRewardForm] = useState({
+    partnerBusiness: '',
+    requiredCheckins: 5,
+    reward: '',
+    rewardType: 'discount',
+    rewardValue: 10
+  })
+  const [savingCrossReward, setSavingCrossReward] = useState(false)
 
   const loadData = async () => {
     if (!profile?.businessCode) {
@@ -101,6 +112,7 @@ function BusinessDashboard() {
       setAllCheckins(allCheck)
       setTransactions(txnData)
       setLoyaltyRewards(bizData?.loyaltyRewards || [])
+      setCrossRewards(bizData?.crossRewards || [])
     } catch (err) {
       console.error('Error loading business data:', err)
     }
@@ -254,6 +266,58 @@ function BusinessDashboard() {
     setLoyaltyRewards(updatedRewards)
   }
 
+  // Cross-business (partner) reward handlers
+  const handleAddCrossReward = async (e) => {
+    e.preventDefault()
+    if (!crossRewardForm.partnerBusiness || !crossRewardForm.reward) return
+
+    setSavingCrossReward(true)
+    try {
+      const newReward = {
+        id: `cr-${Date.now()}`,
+        partnerBusiness: crossRewardForm.partnerBusiness,
+        requiredCheckins: Number(crossRewardForm.requiredCheckins),
+        reward: crossRewardForm.reward,
+        rewardType: crossRewardForm.rewardType,
+        rewardValue: Number(crossRewardForm.rewardValue),
+        isActive: true
+      }
+
+      const updatedRewards = [...crossRewards, newReward]
+      await updateBusinessCrossRewards(profile.businessCode, updatedRewards)
+
+      setCrossRewards(updatedRewards)
+      setCrossRewardForm({
+        partnerBusiness: '',
+        requiredCheckins: 5,
+        reward: '',
+        rewardType: 'discount',
+        rewardValue: 10
+      })
+      setShowCrossRewardForm(false)
+    } catch (err) {
+      console.error('Error adding cross-reward:', err)
+      alert('Error adding partner reward')
+    }
+    setSavingCrossReward(false)
+  }
+
+  const handleRemoveCrossReward = async (rewardId) => {
+    if (!confirm('Remove this partner reward?')) return
+
+    const updatedRewards = crossRewards.filter(r => r.id !== rewardId)
+    await updateBusinessCrossRewards(profile.businessCode, updatedRewards)
+    setCrossRewards(updatedRewards)
+  }
+
+  const handleToggleCrossReward = async (rewardId) => {
+    const updatedRewards = crossRewards.map(r =>
+      r.id === rewardId ? { ...r, isActive: !r.isActive } : r
+    )
+    await updateBusinessCrossRewards(profile.businessCode, updatedRewards)
+    setCrossRewards(updatedRewards)
+  }
+
   if (loading) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -329,7 +393,7 @@ function BusinessDashboard() {
       content: [
         'Customers scan the QR code with their phone camera',
         'They\'re taken to your check-in page (no app download needed)',
-        'If signed in, they earn a check-in toward their Kinderhooker status',
+        'If signed in, they earn a check-in toward their OK Member status',
         'Their tier badge appears so you can offer appropriate discounts'
       ]
     },
@@ -1098,7 +1162,7 @@ function BusinessDashboard() {
                       }}>3</div>
                       <div>
                         <div style={{ fontWeight: '500', color: 'var(--kb-navy)' }}>They tap "Check In"</div>
-                        <div style={{ color: 'var(--kb-gray-500)', fontSize: '0.9rem' }}>Earns progress toward their Kinderhooker tier</div>
+                        <div style={{ color: 'var(--kb-gray-500)', fontSize: '0.9rem' }}>Earns progress toward their OK Member tier</div>
                       </div>
                     </div>
 
@@ -1337,6 +1401,251 @@ function BusinessDashboard() {
                   ))}
                 </div>
               )}
+
+              {/* Partner Rewards Section */}
+              <div style={{ marginTop: '2.5rem', borderTop: '2px solid var(--kb-gray-200)', paddingTop: '2rem' }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: '1rem',
+                }}>
+                  <div>
+                    <h3 style={{ color: 'var(--kb-navy)', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                      <Users size={20} /> Partner Rewards
+                    </h3>
+                    <p style={{ color: 'var(--kb-gray-500)', fontSize: '0.9rem', margin: 0 }}>
+                      Offer rewards to customers who visit other village businesses
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowCrossRewardForm(!showCrossRewardForm)}
+                    className="btn btn-primary"
+                    style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                  >
+                    <Plus size={18} /> Add Partner Reward
+                  </button>
+                </div>
+
+                {/* Add Partner Reward Form */}
+                {showCrossRewardForm && (
+                  <form onSubmit={handleAddCrossReward} style={{
+                    padding: '1.5rem',
+                    background: 'linear-gradient(135deg, rgba(39, 174, 96, 0.05) 0%, rgba(52, 152, 219, 0.05) 100%)',
+                    border: '1px solid var(--kb-gray-200)',
+                    borderRadius: '12px',
+                    marginBottom: '1.5rem',
+                  }}>
+                    <div style={{ marginBottom: '1rem' }}>
+                      <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--kb-gray-600)', fontWeight: '500', fontSize: '0.9rem' }}>
+                        Partner Business *
+                      </label>
+                      <select
+                        value={crossRewardForm.partnerBusiness}
+                        onChange={e => setCrossRewardForm(f => ({ ...f, partnerBusiness: e.target.value }))}
+                        style={{ width: '100%' }}
+                        required
+                      >
+                        <option value="">Select a business...</option>
+                        {allBusinesses
+                          .filter(b => b.code !== profile.businessCode)
+                          .map(b => (
+                            <option key={b.code} value={b.code}>{b.name}</option>
+                          ))
+                        }
+                      </select>
+                      <p style={{ fontSize: '0.8rem', color: 'var(--kb-gray-500)', marginTop: '0.25rem' }}>
+                        Customers who check in at this business will earn your reward
+                      </p>
+                    </div>
+
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                      gap: '1rem',
+                      marginBottom: '1rem',
+                    }}>
+                      <div>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--kb-gray-600)', fontWeight: '500', fontSize: '0.9rem' }}>
+                          Check-ins Required
+                        </label>
+                        <input
+                          type="number"
+                          min="1"
+                          value={crossRewardForm.requiredCheckins}
+                          onChange={e => setCrossRewardForm(f => ({ ...f, requiredCheckins: e.target.value }))}
+                          style={{ width: '100%' }}
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--kb-gray-600)', fontWeight: '500', fontSize: '0.9rem' }}>
+                          Reward Type
+                        </label>
+                        <select
+                          value={crossRewardForm.rewardType}
+                          onChange={e => setCrossRewardForm(f => ({ ...f, rewardType: e.target.value }))}
+                          style={{ width: '100%' }}
+                        >
+                          <option value="discount">% Discount</option>
+                          <option value="freeItem">Free Item</option>
+                          <option value="credit">$ Credit</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--kb-gray-600)', fontWeight: '500', fontSize: '0.9rem' }}>
+                          {crossRewardForm.rewardType === 'freeItem' ? 'Value ($)' : crossRewardForm.rewardType === 'credit' ? 'Credit ($)' : 'Discount (%)'}
+                        </label>
+                        <input
+                          type="number"
+                          min="1"
+                          value={crossRewardForm.rewardValue}
+                          onChange={e => setCrossRewardForm(f => ({ ...f, rewardValue: e.target.value }))}
+                          style={{ width: '100%' }}
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div style={{ marginBottom: '1rem' }}>
+                      <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--kb-gray-600)', fontWeight: '500', fontSize: '0.9rem' }}>
+                        Reward Description *
+                      </label>
+                      <input
+                        type="text"
+                        value={crossRewardForm.reward}
+                        onChange={e => setCrossRewardForm(f => ({ ...f, reward: e.target.value }))}
+                        placeholder="e.g., 10% off your first wine flight"
+                        style={{ width: '100%' }}
+                        required
+                      />
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '0.75rem' }}>
+                      <button
+                        type="submit"
+                        className="btn btn-primary"
+                        disabled={savingCrossReward || !crossRewardForm.partnerBusiness || !crossRewardForm.reward}
+                      >
+                        {savingCrossReward ? 'Saving...' : 'Add Partner Reward'}
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={() => setShowCrossRewardForm(false)}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                )}
+
+                {/* Partner Rewards List */}
+                {crossRewards.length === 0 ? (
+                  <div style={{
+                    textAlign: 'center',
+                    padding: '2rem',
+                    background: 'var(--kb-gray-50)',
+                    borderRadius: '12px',
+                  }}>
+                    <Users size={40} color="var(--kb-gray-300)" style={{ marginBottom: '0.75rem' }} />
+                    <p style={{ color: 'var(--kb-gray-500)', marginBottom: '0.5rem' }}>
+                      No partner rewards set up yet.
+                    </p>
+                    <p style={{ color: 'var(--kb-gray-400)', fontSize: '0.85rem' }}>
+                      Example: "Check in 5x at Village Yoga, get 10% off wine at your store"
+                    </p>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    {crossRewards.map((reward) => {
+                      const partnerBiz = allBusinesses.find(b => b.code === reward.partnerBusiness)
+                      return (
+                        <div
+                          key={reward.id}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            padding: '1rem',
+                            background: reward.isActive ? 'linear-gradient(135deg, rgba(39, 174, 96, 0.05) 0%, rgba(52, 152, 219, 0.05) 100%)' : 'var(--kb-gray-100)',
+                            borderRadius: '10px',
+                            border: '1px solid var(--kb-gray-200)',
+                            opacity: reward.isActive ? 1 : 0.6,
+                            flexWrap: 'wrap',
+                            gap: '1rem',
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1 }}>
+                            <div style={{
+                              width: '50px',
+                              height: '50px',
+                              background: 'white',
+                              borderRadius: '10px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexDirection: 'column',
+                              border: '1px solid var(--kb-gray-200)',
+                            }}>
+                              <div style={{ fontSize: '1.25rem', fontWeight: '700', color: 'var(--kb-green)', lineHeight: 1 }}>
+                                {reward.requiredCheckins}
+                              </div>
+                              <div style={{ fontSize: '0.6rem', color: 'var(--kb-gray-500)' }}>visits</div>
+                            </div>
+                            <div>
+                              <div style={{ fontSize: '0.8rem', color: 'var(--kb-gray-500)', marginBottom: '0.15rem' }}>
+                                When they visit <strong style={{ color: 'var(--kb-navy)' }}>{partnerBiz?.name || reward.partnerBusiness}</strong>
+                              </div>
+                              <div style={{ fontWeight: '600', color: 'var(--kb-navy)' }}>
+                                {reward.reward}
+                              </div>
+                              <div style={{ fontSize: '0.85rem', color: 'var(--kb-gray-500)' }}>
+                                {reward.rewardType === 'discount' && `${reward.rewardValue}% off`}
+                                {reward.rewardType === 'freeItem' && `$${reward.rewardValue} value`}
+                                {reward.rewardType === 'credit' && `$${reward.rewardValue} credit`}
+                                {' at your store'}
+                              </div>
+                            </div>
+                          </div>
+                          <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            <button
+                              onClick={() => handleToggleCrossReward(reward.id)}
+                              className="btn btn-secondary"
+                              style={{ padding: '0.4rem 0.6rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
+                            >
+                              {reward.isActive ? <EyeOff size={16} /> : <Eye size={16} />}
+                            </button>
+                            <button
+                              onClick={() => handleRemoveCrossReward(reward.id)}
+                              className="btn"
+                              style={{ padding: '0.4rem 0.6rem', background: '#e74c3c', color: 'white' }}
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+
+                {/* Partner Rewards Example */}
+                <div style={{
+                  marginTop: '1.5rem',
+                  padding: '1rem',
+                  background: 'rgba(39, 174, 96, 0.08)',
+                  borderRadius: '8px',
+                  borderLeft: '3px solid var(--kb-green)',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--kb-green)', fontWeight: '600', marginBottom: '0.5rem' }}>
+                    <Info size={16} /> How Partner Rewards Work
+                  </div>
+                  <p style={{ color: 'var(--kb-gray-600)', fontSize: '0.9rem', margin: 0 }}>
+                    Partner rewards encourage customers to explore the village! When a customer checks in at your partner business enough times, they can claim your reward. This creates a network effect that benefits everyone.
+                  </p>
+                </div>
+              </div>
 
               {/* Tips */}
               <div style={{

@@ -11,12 +11,15 @@ import {
   UtensilsCrossed,
   ShoppingBag,
   Briefcase,
-  Palette
+  Palette,
+  Gift,
+  ChevronRight,
+  Check
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { getCurrentUserId, getMember } from '../firebase/members'
-import { getMemberCheckinsByCategory } from '../firebase/checkins'
-import { getAllBusinesses } from '../firebase/businesses'
+import { getMemberCheckinsByCategory, getMemberCheckinsByBusiness } from '../firebase/checkins'
+import { getAllBusinesses, getCrossRewardsForMember } from '../firebase/businesses'
 import { TIERS } from '../utils/tiers'
 
 const TIER_ICONS = {
@@ -105,6 +108,7 @@ function MyCard() {
   const { user, profile, isAuthenticated } = useAuth()
   const [member, setMember] = useState(null)
   const [categoryCheckins, setCategoryCheckins] = useState({ food: 0, retail: 0, services: 0, arts: 0 })
+  const [crossRewards, setCrossRewards] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -116,10 +120,17 @@ function MyCard() {
       ])
       setMember(memberData)
 
-      // Get check-ins by category
+      // Get check-ins by category and by business
       if (userId) {
-        const catCounts = await getMemberCheckinsByCategory(userId, businesses)
+        const [catCounts, bizCheckins] = await Promise.all([
+          getMemberCheckinsByCategory(userId, businesses),
+          getMemberCheckinsByBusiness(userId, businesses)
+        ])
         setCategoryCheckins(catCounts)
+
+        // Get cross-rewards with progress
+        const rewards = await getCrossRewardsForMember(userId, bizCheckins)
+        setCrossRewards(rewards)
       }
 
       setLoading(false)
@@ -451,6 +462,109 @@ function MyCard() {
               </div>
             </div>
           </div>
+
+          {/* Partner Rewards Section */}
+          {crossRewards.length > 0 && (
+            <div style={{
+              marginTop: '1.5rem',
+              background: 'white',
+              borderRadius: '16px',
+              padding: '1rem',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                marginBottom: '0.75rem',
+                color: 'var(--kb-navy)',
+                fontWeight: '600',
+              }}>
+                <Gift size={18} color="var(--kb-green)" />
+                Partner Rewards
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                {crossRewards.slice(0, 3).map((reward) => (
+                  <div
+                    key={reward.id}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.75rem',
+                      padding: '0.6rem',
+                      background: reward.isUnlocked ? 'rgba(39, 174, 96, 0.1)' : 'var(--kb-gray-50)',
+                      borderRadius: '10px',
+                      border: reward.isUnlocked ? '1px solid var(--kb-green)' : '1px solid var(--kb-gray-200)',
+                    }}
+                  >
+                    {reward.isUnlocked ? (
+                      <div style={{
+                        width: '32px',
+                        height: '32px',
+                        background: 'var(--kb-green)',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                      }}>
+                        <Check size={16} color="white" />
+                      </div>
+                    ) : (
+                      <div style={{
+                        width: '32px',
+                        height: '32px',
+                        background: 'white',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                        border: '2px solid var(--kb-gray-200)',
+                        fontSize: '0.75rem',
+                        fontWeight: '700',
+                        color: 'var(--kb-gray-500)',
+                      }}>
+                        {reward.currentCheckins}/{reward.requiredCheckins}
+                      </div>
+                    )}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{
+                        fontSize: '0.85rem',
+                        fontWeight: '600',
+                        color: reward.isUnlocked ? 'var(--kb-green)' : 'var(--kb-navy)',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      }}>
+                        {reward.reward}
+                      </div>
+                      <div style={{
+                        fontSize: '0.7rem',
+                        color: 'var(--kb-gray-500)',
+                      }}>
+                        {reward.isUnlocked
+                          ? `Unlocked! Redeem at ${reward.offeringBusinessName}`
+                          : `${reward.checkinsRemaining} more visits to ${reward.partnerBusinessName}`
+                        }
+                      </div>
+                    </div>
+                    <ChevronRight size={16} color="var(--kb-gray-400)" />
+                  </div>
+                ))}
+              </div>
+              {crossRewards.length > 3 && (
+                <div style={{
+                  textAlign: 'center',
+                  marginTop: '0.5rem',
+                  fontSize: '0.8rem',
+                  color: 'var(--kb-gray-500)',
+                }}>
+                  +{crossRewards.length - 3} more rewards available
+                </div>
+              )}
+            </div>
+          )}
 
           {/* CTA below card */}
           <Link

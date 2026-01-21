@@ -4,9 +4,9 @@
   /* Primary Palette - Financial/Trust */
   --kb-navy: #1a2744;
   --kb-navy-light: #2d3e5f;
-  --kb-gold: #c9a227;
-  --kb-gold-light: #e8d48a;
-  --kb-gold-dark: #a68819;
+  --kb-gold: #b8941f;          /* Darkened for WCAG AA contrast */
+  --kb-gold-light: #d4b73d;    /* Darkened for better contrast */
+  --kb-gold-dark: #8c6f14;     /* Darkened for better contrast */
 
   /* Secondary */
   --kb-green: #1a5f2a;
@@ -20,7 +20,9 @@
   --kb-gray-100: #f0f1f3;
   --kb-gray-200: #e2e4e8;
   --kb-gray-300: #c5c9d1;
-  --kb-gray-500: #6b7280;
+  --kb-gray-400: #9ca3af;
+  --kb-gray-500: #525a66;      /* Darkened for WCAG AA contrast */
+  --kb-gray-600: #444b55;      /* Added for better hierarchy */
   --kb-gray-700: #374151;
   --kb-gray-900: #1f2937;
 
@@ -110,6 +112,19 @@ h1, h2, h3, h4 {
   text-decoration: none;
   display: inline-block;
   text-align: center;
+  min-height: 44px; /* WCAG touch target */
+}
+
+/* Focus states for accessibility */
+.btn:focus-visible {
+  outline: 3px solid var(--kb-navy);
+  outline-offset: 2px;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
 }
 
 .btn-primary {
@@ -197,7 +212,7 @@ h1, h2, h3, h4 {
 }
 
 .stat-label {
-  font-size: 0.85rem;
+  font-size: 0.875rem; /* 14px minimum for accessibility */
   color: var(--kb-gray-500);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -206,9 +221,9 @@ h1, h2, h3, h4 {
 /* Badge */
 .badge {
   display: inline-block;
-  padding: 0.25rem 0.75rem;
+  padding: 0.35rem 0.85rem;
   border-radius: 100px;
-  font-size: 0.75rem;
+  font-size: 0.8125rem; /* 13px - slightly below 14px but acceptable for uppercase labels */
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -255,10 +270,17 @@ h1, h2, h3, h4 {
 a {
   color: var(--kb-navy);
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 a:hover {
   color: var(--kb-gold-dark);
+}
+
+a:focus-visible {
+  outline: 2px solid var(--kb-navy);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 /* Form Elements */
@@ -272,9 +294,19 @@ input, select, textarea {
 }
 
 input:focus, select:focus, textarea:focus {
-  outline: none;
+  outline: 2px solid var(--kb-navy);
+  outline-offset: 1px;
   border-color: var(--kb-navy);
   box-shadow: 0 0 0 3px rgba(26, 39, 68, 0.1);
+}
+
+/* Error and success states for forms */
+input.error, select.error, textarea.error {
+  border-color: var(--kb-red);
+}
+
+input.success, select.success, textarea.success {
+  border-color: var(--kb-green);
 }
 
 label {
@@ -318,7 +350,39 @@ tr:hover {
   }
 
   .btn {
-    padding: 0.6rem 1.2rem;
+    padding: 0.875rem 1.25rem; /* Maintain 44px minimum height */
     font-size: 0.9rem;
+    min-height: 44px; /* WCAG touch target */
+  }
+}
+
+/* Tablet breakpoint */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 0.75rem;
+  }
+}
+
+/* Large desktop */
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1140px;
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --kb-gray-500: #333333;
+    --kb-gold: #996600;
   }
 }

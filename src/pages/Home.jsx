@@ -122,7 +122,7 @@ function Home() {
               {
                 step: '3',
                 title: 'Check In',
-                description: 'Scan QR codes when you visit to build your Kinderhooker status and unlock rewards.',
+                description: 'Scan QR codes when you visit to build your OK Member status and unlock rewards.',
                 Icon: QrCode,
               },
               {
@@ -174,7 +174,7 @@ function Home() {
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
             <div className="badge badge-gold" style={{ marginBottom: '1rem' }}>OK Membership</div>
-            <h2 style={{ color: 'var(--kb-navy)', marginBottom: '0.5rem' }}>Become a Kinderhooker</h2>
+            <h2 style={{ color: 'var(--kb-navy)', marginBottom: '0.5rem' }}>Become an OK Member</h2>
             <p style={{ color: 'var(--kb-gray-500)', maxWidth: '600px', margin: '0 auto' }}>
               Visit local businesses to level up your membership and unlock better exchange rates
             </p>

@@ -65,7 +65,7 @@ function Footer() {
           </h4>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             <Link to="/account" style={{ color: 'var(--kb-gray-300)', fontSize: '0.9rem' }}>My Account</Link>
-            <Link to="/profile" style={{ color: 'var(--kb-gray-300)', fontSize: '0.9rem' }}>Kinderhooker Profile</Link>
+            <Link to="/profile" style={{ color: 'var(--kb-gray-300)', fontSize: '0.9rem' }}>My Profile</Link>
             <Link to="/scan/KB-0001" style={{ color: 'var(--kb-gray-300)', fontSize: '0.9rem' }}>Verify Currency</Link>
           </div>
         </div>

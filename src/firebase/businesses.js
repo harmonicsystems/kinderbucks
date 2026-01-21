@@ -295,3 +295,80 @@ export async function getBusinessWithRewards(code) {
     loyaltyRewards: business.loyaltyRewards || []
   }
 }
+
+// ==================== CROSS-BUSINESS REWARDS ====================
+
+/**
+ * Cross-business reward schema:
+ * {
+ *   id: string (unique ID),
+ *   partnerBusiness: string (businessCode where activity is required),
+ *   requiredCheckins: number (check-ins needed at partner),
+ *   reward: string (description of what they get),
+ *   rewardType: 'discount' | 'freeItem' | 'credit',
+ *   rewardValue: number (percentage for discount, or item value),
+ *   isActive: boolean
+ * }
+ */
+
+/**
+ * Update business cross-rewards configuration
+ * These are rewards THIS business offers to customers who visit partner businesses
+ */
+export async function updateBusinessCrossRewards(code, crossRewards) {
+  const docRef = doc(db, COLLECTION, code)
+  await updateDoc(docRef, {
+    crossRewards: crossRewards,
+    crossRewardsUpdatedAt: serverTimestamp()
+  })
+}
+
+/**
+ * Get all cross-rewards across all businesses
+ * Returns array of { offeringBusiness, partnerBusiness, reward details }
+ */
+export async function getAllCrossRewards() {
+  const businesses = await getAllBusinesses()
+  const allRewards = []
+
+  for (const biz of businesses) {
+    if (biz.crossRewards && biz.crossRewards.length > 0) {
+      for (const reward of biz.crossRewards) {
+        if (reward.isActive) {
+          allRewards.push({
+            ...reward,
+            offeringBusiness: biz.code,
+            offeringBusinessName: biz.name
+          })
+        }
+      }
+    }
+  }
+
+  return allRewards
+}
+
+/**
+ * Get cross-rewards that a member can earn based on their check-in history
+ * Returns rewards with progress info
+ */
+export async function getCrossRewardsForMember(memberId, memberCheckinsByBusiness) {
+  const allRewards = await getAllCrossRewards()
+  const businesses = await getAllBusinesses()
+  const bizMap = Object.fromEntries(businesses.map(b => [b.code, b]))
+
+  return allRewards.map(reward => {
+    const partnerCheckins = memberCheckinsByBusiness[reward.partnerBusiness]?.count || 0
+    const isUnlocked = partnerCheckins >= reward.requiredCheckins
+    const progress = Math.min(100, (partnerCheckins / reward.requiredCheckins) * 100)
+
+    return {
+      ...reward,
+      partnerBusinessName: bizMap[reward.partnerBusiness]?.name || reward.partnerBusiness,
+      currentCheckins: partnerCheckins,
+      isUnlocked,
+      progress,
+      checkinsRemaining: Math.max(0, reward.requiredCheckins - partnerCheckins)
+    }
+  })
+}

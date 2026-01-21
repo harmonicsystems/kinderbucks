@@ -244,7 +244,7 @@ function InteractiveDemo() {
             </div>
 
             <p style={{ color: 'var(--kb-gray-600)', fontSize: '0.95rem', marginBottom: '1.5rem' }}>
-              Scan the QR code at each business you visit. Build your Kinderhooker status and unlock better exchange rates!
+              Scan the QR code at each business you visit. Build your OK Member status and unlock better exchange rates!
             </p>
 
             {/* QR Code Display - Business style */}
@@ -531,7 +531,7 @@ function InteractiveDemo() {
           }}
         >
           <p style={{ color: 'var(--kb-gray-600)', marginBottom: '1rem' }}>
-            Ready to start your Kinderhooker journey?
+            Ready to start your OK Member journey?
           </p>
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link to="/profile" className="btn btn-primary">
@@ -665,7 +665,7 @@ function About() {
       <section style={{ padding: '4rem 1rem', background: 'var(--kb-cream)' }}>
         <div style={{ maxWidth: '800px', margin: '0 auto' }}>
           <div className="badge badge-gold" style={{ marginBottom: '1rem' }}>OK Membership</div>
-          <h2 style={{ color: 'var(--kb-navy)', marginBottom: '1.5rem' }}>The Kinderhooker Program</h2>
+          <h2 style={{ color: 'var(--kb-navy)', marginBottom: '1.5rem' }}>The OK Membership Program</h2>
           <div style={{ color: 'var(--kb-gray-700)', lineHeight: 1.8 }}>
             <p style={{ marginBottom: '1rem' }}>
               <strong>OK Membership</strong> rewards customers who actively support local businesses.
@@ -678,7 +678,7 @@ function About() {
             </p>
             <p>
               There's no cost to join. Simply start checking in at businesses, and you'll automatically
-              become a "Kinderhooker" with access to bonus exchange rates.
+              become an OK Member with access to bonus exchange rates.
             </p>
           </div>
 

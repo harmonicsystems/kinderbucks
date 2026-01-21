@@ -143,7 +143,7 @@ function Login() {
               <p style={{ color: 'var(--kb-gray-500)', fontSize: '0.95rem' }}>
                 {mode === 'login'
                   ? 'Sign in to access your account'
-                  : 'Create an account to track your Kinderhooker status'
+                  : 'Create an account to track your OK Member status'
                 }
               </p>
             </div>
@@ -374,7 +374,7 @@ function Login() {
             textAlign: 'center',
           }}>
             <p style={{ color: 'var(--kb-gray-700)', fontSize: '0.9rem', margin: 0 }}>
-              Create an account to sync your Kinderhooker status across devices and never lose your tier progress!
+              Create an account to sync your OK Member status across devices and never lose your tier progress!
             </p>
           </div>
         </motion.div>

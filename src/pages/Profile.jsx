@@ -109,7 +109,7 @@ function Profile() {
                   Welcome to Kinderbucks!
                 </h1>
                 <p style={{ color: 'var(--kb-gray-600)', marginBottom: '1.5rem', fontSize: '1.05rem' }}>
-                  You haven't checked in anywhere yet. Visit a local business and scan their QR code to start building your Kinderhooker status!
+                  You haven't checked in anywhere yet. Visit a local business and scan their QR code to start building your OK Member status!
                 </p>
 
                 {!isAuthenticated && (
@@ -437,7 +437,7 @@ function Profile() {
                 color: 'var(--kb-gray-500)',
                 fontSize: '0.9rem',
               }}>
-                Total check-ins: {member.totalCheckins || 0}
+                Total Check-ins: {member.totalCheckins || 0}
               </div>
 
               {/* Sign in prompt for guests */}

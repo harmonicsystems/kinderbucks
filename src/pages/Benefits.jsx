@@ -26,7 +26,7 @@ function Benefits() {
     {
       Icon: Store,
       title: 'Exclusive Local Deals',
-      description: 'Participating businesses offer special discounts and promotions exclusively for Kinderhooker members.',
+      description: 'Participating businesses offer special discounts and promotions exclusively for OK Members.',
       highlight: 'Member-only offers',
     },
     {
@@ -70,7 +70,7 @@ function Benefits() {
           <div className="badge badge-navy" style={{ marginBottom: '1rem' }}>OK Membership</div>
           <h1 style={{ marginBottom: '1rem' }}>Member Benefits & Rewards</h1>
           <p style={{ fontSize: '1.1rem', opacity: 0.9 }}>
-            The more you support local, the more you earn. It pays to be a Kinderhooker.
+            The more you support local, the more you earn. It pays to be an OK Member.
           </p>
         </div>
       </section>
