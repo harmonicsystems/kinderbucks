@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hudson Valley Day Trip Layer - Every Village, A Collection</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: linear-gradient(180deg, #fef3c7 0%, #fef9c3 50%, #ecfccb 100%);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: clamp(32px, 8vw, 60px) clamp(16px, 4vw, 24px);
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: clamp(32px, 6vw, 48px);
+    }
+
+    .region-badge {
+      display: inline-block;
+      background: #365314;
+      color: #ecfccb;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 6px 16px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(28px, 6vw, 42px);
+      color: #1a2e05;
+      margin-bottom: 12px;
+    }
+
+    .tagline {
+      font-size: clamp(16px, 3vw, 20px);
+      color: #4d7c0f;
+    }
+
+    .hero-concept {
+      background: white;
+      border-radius: 20px;
+      padding: clamp(24px, 5vw, 36px);
+      margin-bottom: clamp(28px, 5vw, 40px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+
+    .hero-concept h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(20px, 4vw, 28px);
+      color: #1a2e05;
+      margin-bottom: 16px;
+    }
+
+    .hero-concept p {
+      font-size: clamp(15px, 2.5vw, 17px);
+      color: #555;
+      max-width: 700px;
+      margin: 0 auto 20px;
+    }
+
+    .hero-concept .highlight {
+      background: linear-gradient(135deg, #84cc16 0%, #22c55e 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700;
+    }
+
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 16px;
+      align-items: center;
+      margin-top: 24px;
+    }
+
+    .compare-box {
+      padding: clamp(16px, 3vw, 20px);
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .compare-box.old {
+      background: #fef2f2;
+      border: 2px solid #fecaca;
+    }
+
+    .compare-box.new {
+      background: #f0fdf4;
+      border: 2px solid #bbf7d0;
+    }
+
+    .compare-box h4 {
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .compare-box.old h4 { color: #dc2626; }
+    .compare-box.new h4 { color: #16a34a; }
+
+    .compare-box ul {
+      list-style: none;
+      font-size: 13px;
+      color: #555;
+      text-align: left;
+    }
+
+    .compare-box li {
+      padding: 3px 0;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .compare-box.old li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 7px;
+      width: 12px;
+      height: 12px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23dc2626' stroke-width='3'%3E%3Cline x1='18' y1='6' x2='6' y2='18'/%3E%3Cline x1='6' y1='6' x2='18' y2='18'/%3E%3C/svg%3E") no-repeat center;
+      background-size: contain;
+    }
+
+    .compare-box.new li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 7px;
+      width: 12px;
+      height: 12px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2316a34a' stroke-width='3'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") no-repeat center;
+      background-size: contain;
+    }
+
+    .vs-circle {
+      width: 40px;
+      height: 40px;
+      background: #1a2e05;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    section {
+      margin-bottom: clamp(32px, 6vw, 48px);
+    }
+
+    h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(20px, 4vw, 26px);
+      color: #1a2e05;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h2 svg {
+      width: 28px;
+      height: 28px;
+      stroke: #4d7c0f;
+      stroke-width: 2;
+      fill: none;
+      flex-shrink: 0;
+    }
+
+    .village-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .village-card {
+      background: white;
+      border-radius: 16px;
+      padding: clamp(18px, 3vw, 24px) clamp(16px, 2.5vw, 20px);
+      text-align: center;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      border-top: 5px solid #84cc16;
+      transition: transform 0.2s;
+    }
+
+    .village-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .village-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 12px;
+      background: #f0fdf4;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .village-icon svg {
+      width: 28px;
+      height: 28px;
+      stroke: #4d7c0f;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .village-card h3 {
+      font-size: 18px;
+      color: #1a2e05;
+      margin-bottom: 4px;
+    }
+
+    .village-card .mascot {
+      font-size: 13px;
+      color: #4d7c0f;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .village-card p {
+      font-size: 12px;
+      color: #777;
+    }
+
+    .village-card .collect {
+      display: inline-block;
+      margin-top: 12px;
+      background: #f0fdf4;
+      color: #16a34a;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 12px;
+    }
+
+    .artist-section {
+      background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+      border-radius: 20px;
+      padding: clamp(24px, 5vw, 36px);
+      color: white;
+    }
+
+    .artist-section h2 {
+      color: white;
+    }
+
+    .artist-section h2 svg {
+      stroke: white;
+    }
+
+    .artist-section > p {
+      font-size: 16px;
+      opacity: 0.95;
+      margin-bottom: 20px;
+    }
+
+    .artist-benefits {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .artist-benefit {
+      background: rgba(255,255,255,0.15);
+      border-radius: 12px;
+      padding: clamp(16px, 3vw, 20px);
+    }
+
+    .artist-benefit h4 {
+      font-size: 16px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .artist-benefit h4 svg {
+      width: 18px;
+      height: 18px;
+      stroke: white;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .artist-benefit p {
+      font-size: 13px;
+      opacity: 0.85;
+      margin: 0;
+    }
+
+    .how-works {
+      background: white;
+      border-radius: 20px;
+      padding: clamp(24px, 5vw, 36px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .flow-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .flow-step {
+      text-align: center;
+    }
+
+    .flow-step .num {
+      width: 36px;
+      height: 36px;
+      background: #84cc16;
+      color: #1a2e05;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      margin: 0 auto 10px;
+    }
+
+    .flow-step h4 {
+      font-size: 14px;
+      color: #1a2e05;
+      margin-bottom: 4px;
+    }
+
+    .flow-step p {
+      font-size: 11px;
+      color: #777;
+    }
+
+    .infinite-section {
+      background: #1a2e05;
+      border-radius: 20px;
+      padding: clamp(24px, 5vw, 36px);
+      color: white;
+      text-align: center;
+    }
+
+    .infinite-section h2 {
+      color: #84cc16;
+      justify-content: center;
+    }
+
+    .infinite-section h2 svg {
+      stroke: #84cc16;
+    }
+
+    .infinite-section > p {
+      font-size: 16px;
+      opacity: 0.9;
+      max-width: 650px;
+      margin: 0 auto 24px;
+    }
+
+    .infinite-examples {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+    }
+
+    .infinite-example {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: clamp(12px, 2vw, 16px);
+    }
+
+    .infinite-example .icon-wrap {
+      width: 40px;
+      height: 40px;
+      margin: 0 auto 8px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .infinite-example .icon-wrap svg {
+      width: 24px;
+      height: 24px;
+      stroke: #84cc16;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .infinite-example h4 {
+      font-size: 13px;
+      color: #84cc16;
+      margin-bottom: 4px;
+    }
+
+    .infinite-example p {
+      font-size: 11px;
+      opacity: 0.7;
+      margin: 0;
+    }
+
+    .day-trip-section {
+      background: white;
+      border-radius: 20px;
+      padding: clamp(24px, 5vw, 36px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .day-trip-section > p {
+      font-size: 15px;
+      color: #555;
+      margin-bottom: 16px;
+    }
+
+    .trip-route {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 24px;
+      padding: clamp(16px, 3vw, 20px);
+      background: #fefce8;
+      border-radius: 12px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .trip-stop {
+      text-align: center;
+      flex: 1;
+      min-width: 70px;
+    }
+
+    .trip-stop .icon {
+      width: 32px;
+      height: 32px;
+      margin: 0 auto 4px;
+    }
+
+    .trip-stop .icon svg {
+      width: 100%;
+      height: 100%;
+      stroke: #4d7c0f;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .trip-stop h4 {
+      font-size: 12px;
+      color: #1a2e05;
+    }
+
+    .trip-stop p {
+      font-size: 10px;
+      color: #666;
+    }
+
+    .trip-arrow {
+      flex-shrink: 0;
+    }
+
+    .trip-arrow svg {
+      width: 20px;
+      height: 20px;
+      stroke: #84cc16;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .trip-reward {
+      background: #84cc16;
+      color: #1a2e05;
+      padding: clamp(12px, 2vw, 16px) clamp(16px, 3vw, 24px);
+      border-radius: 12px;
+      text-align: center;
+      min-width: 120px;
+    }
+
+    .trip-reward h4 {
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .trip-reward h4 svg {
+      width: 18px;
+      height: 18px;
+      stroke: #1a2e05;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .trip-reward p {
+      font-size: 11px;
+    }
+
+    .county-map {
+      background: #f0fdf4;
+      border-radius: 16px;
+      padding: clamp(20px, 4vw, 28px);
+      text-align: center;
+      margin-top: 24px;
+    }
+
+    .county-map h3 {
+      font-size: 18px;
+      color: #1a2e05;
+      margin-bottom: 8px;
+    }
+
+    .county-map > p {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 16px;
+    }
+
+    .county-stats {
+      display: flex;
+      justify-content: center;
+      gap: clamp(20px, 5vw, 32px);
+      flex-wrap: wrap;
+    }
+
+    .county-stat {
+      text-align: center;
+    }
+
+    .county-stat .num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(28px, 5vw, 36px);
+      font-weight: 700;
+      color: #16a34a;
+    }
+
+    .county-stat .label {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .bottom-cta {
+      text-align: center;
+      margin-top: clamp(32px, 6vw, 48px);
+      padding: clamp(28px, 5vw, 40px);
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .bottom-cta h2 {
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .bottom-cta p {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .bottom-cta .small {
+      font-size: 13px;
+      color: #999;
+    }
+
+    @media (max-width: 600px) {
+      .comparison {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .vs-circle {
+        margin: 0 auto;
+      }
+      .trip-route {
+        flex-direction: column;
+      }
+      .trip-arrow svg {
+        transform: rotate(90deg);
+      }
+      .trip-stop {
+        width: 100%;
+      }
+    }
+
+    @media print {
+      body { background: white; }
+      .hero-concept, .how-works, .day-trip-section, .bottom-cta, .village-card { box-shadow: none; border: 1px solid #ddd; }
+      .artist-section { background: #333 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .infinite-section { background: #333 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="region-badge">Columbia County & Beyond</div>
+      <h1>Every Village, A Collection</h1>
+      <div class="tagline">The Disneyland layer for Hudson Valley day trips</div>
+    </header>
+
+    <div class="hero-concept">
+      <h2>What if every village had its own <span class="highlight">infinite art universe?</span></h2>
+      <p>Catskill has painted cat statues. Charming, but expensive. Static. Hard to maintain. What if instead, every village had <strong>hundreds of collectible digital artworks</strong>-created by local artists, refreshed seasonally, discovered by scanning QR codes throughout town?</p>
+
+      <div class="comparison">
+        <div class="compare-box old">
+          <h4>Physical Installations</h4>
+          <ul>
+            <li>Expensive to create</li>
+            <li>Weather damage</li>
+            <li>Theft/vandalism</li>
+            <li>Fixed quantity</li>
+            <li>Can't update</li>
+            <li>One-time experience</li>
+          </ul>
+        </div>
+        <div class="vs-circle">VS</div>
+        <div class="compare-box new">
+          <h4>Digital Collections</h4>
+          <ul>
+            <li>Cheap to produce</li>
+            <li>Weatherproof (it's pixels)</li>
+            <li>Can't be stolen</li>
+            <li>Infinite variations</li>
+            <li>Seasonal updates</li>
+            <li>Reason to return</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <section>
+      <h2>
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+        Every Village Gets a Mascot Universe
+      </h2>
+      <div class="village-grid">
+        <div class="village-card">
+          <div class="village-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 5c-3.5 0-6 2-6 5.5 0 2 1.5 3.5 3 4.5v2h6v-2c1.5-1 3-2.5 3-4.5 0-3.5-2.5-5.5-6-5.5z"/><path d="M9 21h6"/><path d="M10 17v4"/><path d="M14 17v4"/></svg>
+          </div>
+          <h3>Catskill</h3>
+          <div class="mascot">The Cats</div>
+          <p>Already famous for cat statues. Now: infinite cat art. Seasonal cats. Artist cats. Historical cats.</p>
+          <span class="collect">Collect 50+ cats</span>
+        </div>
+
+        <div class="village-card">
+          <div class="village-icon">
+            <svg viewBox="0 0 24 24"><path d="M18 8c0-2.2-3.6-4-8-4S2 5.8 2 8c0 1.5 1.8 2.8 4.5 3.5L5 18l3-2 4 3 4-3-1.5-6.5C17.2 10.8 18 9.5 18 8z"/><circle cx="8" cy="8" r="1"/><circle cx="14" cy="8" r="1"/></svg>
+          </div>
+          <h3>Kinderhook</h3>
+          <div class="mascot">The Foxes</div>
+          <p>Van Buren was "The Sly Fox." Dutch heritage foxes. Revolutionary foxes. OK foxes.</p>
+          <span class="collect">Collect 50+ foxes</span>
+        </div>
+
+        <div class="village-card">
+          <div class="village-icon">
+            <svg viewBox="0 0 24 24"><path d="M3 18c0 0 3-6 9-6s9 6 9 6"/><path d="M12 12c-2 0-3-1-3-3s1.5-4 3-4 3 2 3 4-1 3-3 3z"/><path d="M6 14c1-1 2-1 3 0"/><circle cx="8" cy="10" r="1"/></svg>
+          </div>
+          <h3>Hudson</h3>
+          <div class="mascot">The Whales</div>
+          <p>Whaling history. River whales. Antique whales. Warren Street whales.</p>
+          <span class="collect">Collect 50+ whales</span>
+        </div>
+
+        <div class="village-card">
+          <div class="village-icon">
+            <svg viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="8" rx="1"/><path d="M6 11V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v5"/><circle cx="8" cy="15" r="2"/><circle cx="16" cy="15" r="2"/><path d="M4 11l-2 4"/><path d="M20 11l2 4"/></svg>
+          </div>
+          <h3>Chatham</h3>
+          <div class="mascot">The Trains</div>
+          <p>Railroad heritage. Steam trains. Modern trains. Film festival trains.</p>
+          <span class="collect">Collect 50+ trains</span>
+        </div>
+
+        <div class="village-card">
+          <div class="village-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><path d="M12 5v-2"/><path d="M12 21v-2"/><path d="M16 8c-1.5-1-3-1.5-4-1.5"/></svg>
+          </div>
+          <h3>Germantown</h3>
+          <div class="mascot">The Apples</div>
+          <p>Orchard country. Heirloom apples. Cider apples. Palatine apples.</p>
+          <span class="collect">Collect 50+ apples</span>
+        </div>
+
+        <div class="village-card">
+          <div class="village-icon">
+            <svg viewBox="0 0 24 24"><path d="M2 20l3.5-2L8 20l3.5-2L14 20l3.5-2L20 20l2-2v-4l-2-2-2 2-2-2-2 2-2-2-2 2-2-2-2 2-2-2v4l2 2z"/><path d="M4 14v-4a8 8 0 0 1 16 0v4"/><path d="M12 6v2"/></svg>
+          </div>
+          <h3>Athens</h3>
+          <div class="mascot">The Boats</div>
+          <p>Lighthouse village. Ferry boats. Ice boats. Hudson River sloops.</p>
+          <span class="collect">Collect 50+ boats</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="artist-section">
+      <h2>
+        <svg viewBox="0 0 24 24"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+        Local Artists Run the Universe
+      </h2>
+      <p>Every piece of art is created by a Hudson Valley artist. They get credited, paid, and discovered. The collection stays fresh because new artists are always contributing.</p>
+
+      <div class="artist-benefits">
+        <div class="artist-benefit">
+          <h4>
+            <svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M2 10h2"/><path d="M20 10h2"/></svg>
+            Artist Stipends
+          </h4>
+          <p>$50-200 per illustration, depending on complexity. Ongoing commissions for seasonal updates.</p>
+        </div>
+        <div class="artist-benefit">
+          <h4>
+            <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Attribution Everywhere
+          </h4>
+          <p>Every collectible links to the artist's portfolio. Visitors discover local talent while exploring.</p>
+        </div>
+        <div class="artist-benefit">
+          <h4>
+            <svg viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg>
+            Style Diversity
+          </h4>
+          <p>Watercolor cats. Pixel art foxes. Vintage whales. Every artist brings their own voice.</p>
+        </div>
+        <div class="artist-benefit">
+          <h4>
+            <svg viewBox="0 0 24 24"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
+            Always Fresh
+          </h4>
+          <p>New artists, new styles, new seasonal drops. There's always a reason to come back.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="how-works">
+      <h2>
+        <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        How It Works for Visitors
+      </h2>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="num">1</div>
+          <h4>Arrive</h4>
+          <p>Visit any participating village</p>
+        </div>
+        <div class="flow-step">
+          <div class="num">2</div>
+          <h4>Scan</h4>
+          <p>QR codes at shops, landmarks, trails</p>
+        </div>
+        <div class="flow-step">
+          <div class="num">3</div>
+          <h4>Collect</h4>
+          <p>Unlock unique art for your gallery</p>
+        </div>
+        <div class="flow-step">
+          <div class="num">4</div>
+          <h4>Complete</h4>
+          <p>Fill collections, earn badges</p>
+        </div>
+        <div class="flow-step">
+          <div class="num">5</div>
+          <h4>Return</h4>
+          <p>New seasons = new art to find</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="infinite-section">
+      <h2>
+        <svg viewBox="0 0 24 24"><path d="M18.178 8c5.096 0 5.096 8 0 8-5.095 0-7.133-8-12.739-8-4.585 0-4.585 8 0 8 5.606 0 7.644-8 12.74-8z"/></svg>
+        Why Digital = Infinite
+      </h2>
+      <p>Physical installations cap at maybe 20-30 pieces. Digital collections can have hundreds, with seasonal variants, rare editions, and artist collaborations.</p>
+
+      <div class="infinite-examples">
+        <div class="infinite-example">
+          <div class="icon-wrap">
+            <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0 9 9c0 4.97-4.03 9-9 9s-9-4.03-9-9a9 9 0 0 0 9-9z"/><path d="M12 3v9l6.36 3.18"/></svg>
+          </div>
+          <h4>Spring Cats</h4>
+          <p>Cherry blossom cats, garden cats, rain cats</p>
+        </div>
+        <div class="infinite-example">
+          <div class="icon-wrap">
+            <svg viewBox="0 0 24 24"><path d="M17 6.1H3M21 12H8M21 18H3"/><circle cx="19" cy="6" r="2"/><circle cx="5" cy="12" r="2"/><circle cx="19" cy="18" r="2"/></svg>
+          </div>
+          <h4>Fall Foxes</h4>
+          <p>Harvest foxes, Halloween foxes, leaf pile foxes</p>
+        </div>
+        <div class="infinite-example">
+          <div class="icon-wrap">
+            <svg viewBox="0 0 24 24"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><line x1="8" y1="16" x2="8.01" y2="16"/><line x1="8" y1="20" x2="8.01" y2="20"/><line x1="12" y1="18" x2="12.01" y2="18"/><line x1="12" y1="22" x2="12.01" y2="22"/><line x1="16" y1="16" x2="16.01" y2="16"/><line x1="16" y1="20" x2="16.01" y2="20"/></svg>
+          </div>
+          <h4>Winter Whales</h4>
+          <p>Ice whales, holiday whales, cozy whales</p>
+        </div>
+        <div class="infinite-example">
+          <div class="icon-wrap">
+            <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <h4>Rare Editions</h4>
+          <p>Artist collabs, one-day drops, secret locations</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="day-trip-section">
+      <h2>
+        <svg viewBox="0 0 24 24"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21 3 6"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+        The Day Trip Game
+      </h2>
+      <p>Visitors don't just go to one village-they collect across the whole county. Complete a "Columbia County Safari" and earn rewards.</p>
+
+      <div class="trip-route">
+        <div class="trip-stop">
+          <div class="icon">
+            <svg viewBox="0 0 24 24"><path d="M18 8c0-2.2-3.6-4-8-4S2 5.8 2 8c0 1.5 1.8 2.8 4.5 3.5L5 18l3-2 4 3 4-3-1.5-6.5C17.2 10.8 18 9.5 18 8z"/></svg>
+          </div>
+          <h4>Kinderhook</h4>
+          <p>3 foxes</p>
+        </div>
+        <span class="trip-arrow">
+          <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+        <div class="trip-stop">
+          <div class="icon">
+            <svg viewBox="0 0 24 24"><path d="M3 18c0 0 3-6 9-6s9 6 9 6"/><path d="M12 12c-2 0-3-1-3-3s1.5-4 3-4 3 2 3 4-1 3-3 3z"/></svg>
+          </div>
+          <h4>Hudson</h4>
+          <p>3 whales</p>
+        </div>
+        <span class="trip-arrow">
+          <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+        <div class="trip-stop">
+          <div class="icon">
+            <svg viewBox="0 0 24 24"><path d="M12 5c-3.5 0-6 2-6 5.5 0 2 1.5 3.5 3 4.5v2h6v-2c1.5-1 3-2.5 3-4.5 0-3.5-2.5-5.5-6-5.5z"/></svg>
+          </div>
+          <h4>Catskill</h4>
+          <p>3 cats</p>
+        </div>
+        <span class="trip-arrow">
+          <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+        <div class="trip-stop">
+          <div class="icon">
+            <svg viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="8" rx="1"/><path d="M6 11V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v5"/><circle cx="8" cy="15" r="2"/><circle cx="16" cy="15" r="2"/></svg>
+          </div>
+          <h4>Chatham</h4>
+          <p>3 trains</p>
+        </div>
+        <span class="trip-arrow">
+          <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+        <div class="trip-reward">
+          <h4>
+            <svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+            County Champion
+          </h4>
+          <p>Badge + Rare art + Discounts</p>
+        </div>
+      </div>
+
+      <div class="county-map">
+        <h3>Columbia County: The Perfect Scale</h3>
+        <p>Small enough to drive in a day. Big enough to need multiple trips. Each village 10-20 minutes apart.</p>
+        <div class="county-stats">
+          <div class="county-stat">
+            <div class="num">12+</div>
+            <div class="label">Villages & hamlets</div>
+          </div>
+          <div class="county-stat">
+            <div class="num">600+</div>
+            <div class="label">Potential collectibles</div>
+          </div>
+          <div class="county-stat">
+            <div class="num">50+</div>
+            <div class="label">Local artists</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Why This Works
+      </h2>
+      <div class="village-grid">
+        <div class="village-card" style="border-top-color: #7c3aed;">
+          <div class="village-icon" style="background: #f3e8ff;">
+            <svg viewBox="0 0 24 24" style="stroke: #7c3aed;"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
+          </div>
+          <h3>Return Visits</h3>
+          <p>Seasonal art means there's always new content. "Did you get the winter foxes yet?"</p>
+        </div>
+
+        <div class="village-card" style="border-top-color: #ec4899;">
+          <div class="village-icon" style="background: #fce7f3;">
+            <svg viewBox="0 0 24 24" style="stroke: #ec4899;"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          </div>
+          <h3>Shareable</h3>
+          <p>People screenshot and share their collections. Free marketing from every visitor.</p>
+        </div>
+
+        <div class="village-card" style="border-top-color: #f59e0b;">
+          <div class="village-icon" style="background: #fef3c7;">
+            <svg viewBox="0 0 24 24" style="stroke: #f59e0b;"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <h3>Foot Traffic</h3>
+          <p>Scanning happens at businesses. Collectors become customers.</p>
+        </div>
+
+        <div class="village-card" style="border-top-color: #06b6d4;">
+          <div class="village-icon" style="background: #cffafe;">
+            <svg viewBox="0 0 24 24" style="stroke: #06b6d4;"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><circle cx="11" cy="11" r="2"/></svg>
+          </div>
+          <h3>Local Pride</h3>
+          <p>Artists get work. Villages get identity. Everyone has skin in the game.</p>
+        </div>
+
+        <div class="village-card" style="border-top-color: #10b981;">
+          <div class="village-icon" style="background: #d1fae5;">
+            <svg viewBox="0 0 24 24" style="stroke: #10b981;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
+          <h3>Data</h3>
+          <p>See which villages people visit, which routes they take, what brings them back.</p>
+        </div>
+
+        <div class="village-card" style="border-top-color: #8b5cf6;">
+          <div class="village-icon" style="background: #ede9fe;">
+            <svg viewBox="0 0 24 24" style="stroke: #8b5cf6;"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <h3>Scalable</h3>
+          <p>Works for one village or fifty. Add a new town = add a new mascot universe.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="bottom-cta">
+      <h2>Start with Kinderhook. Scale to the Valley.</h2>
+      <p>Proof of concept: OK Kinderhook with foxes. Then Hudson. Then Catskill. Then everywhere.</p>
+      <p class="small">Built by Harmonic Systems - Kinderhook, NY</p>
+    </div>
+  </div>
+</body>
+</html>
