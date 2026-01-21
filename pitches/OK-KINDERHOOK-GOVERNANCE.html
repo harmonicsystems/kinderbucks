@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OK Kinderhook - Who Runs What</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #fafafa;
+      min-height: 100vh;
+      padding: clamp(20px, 5vw, 40px) clamp(16px, 4vw, 20px);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: clamp(24px, 5vw, 40px);
+    }
+
+    h1 {
+      font-size: clamp(28px, 5vw, 36px);
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: clamp(15px, 3vw, 18px);
+      color: #666;
+    }
+
+    .philosophy {
+      background: linear-gradient(135deg, #606c38 0%, #283618 100%);
+      color: white;
+      border-radius: 16px;
+      padding: clamp(20px, 4vw, 32px);
+      margin-bottom: clamp(24px, 5vw, 40px);
+      text-align: center;
+    }
+
+    .philosophy h2 {
+      font-size: clamp(18px, 4vw, 24px);
+      margin-bottom: 16px;
+    }
+
+    .philosophy p {
+      font-size: clamp(15px, 2.5vw, 17px);
+      opacity: 0.95;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .philosophy strong {
+      color: #c5e1a5;
+    }
+
+    section {
+      margin-bottom: clamp(24px, 5vw, 40px);
+    }
+
+    h2 {
+      font-size: clamp(20px, 4vw, 24px);
+      color: #1a1a1a;
+      margin-bottom: 20px;
+      padding-bottom: 8px;
+      border-bottom: 3px solid #606c38;
+    }
+
+    .stakeholder-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .stakeholder {
+      background: white;
+      border-radius: 12px;
+      padding: clamp(18px, 3vw, 24px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      border-left: 5px solid #606c38;
+    }
+
+    .stakeholder-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .stakeholder-icon {
+      width: 40px;
+      height: 40px;
+      background: #f5f7f0;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .stakeholder-icon svg {
+      width: 22px;
+      height: 22px;
+      stroke: #606c38;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .stakeholder h3 {
+      font-size: 18px;
+      color: #1a1a1a;
+    }
+
+    .stakeholder .role {
+      font-size: 12px;
+      color: #606c38;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stakeholder p {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 12px;
+    }
+
+    .they-own {
+      background: #f5f7f0;
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .they-own h4 {
+      font-size: 12px;
+      color: #606c38;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .they-own ul {
+      list-style: none;
+      font-size: 13px;
+      color: #444;
+    }
+
+    .they-own li {
+      padding: 3px 0;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .they-own li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 12px;
+      height: 12px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23606c38' stroke-width='3'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") no-repeat center;
+      background-size: contain;
+    }
+
+    .david-role {
+      background: white;
+      border-radius: 12px;
+      padding: clamp(20px, 4vw, 28px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      border: 2px dashed #606c38;
+      margin-bottom: clamp(24px, 5vw, 40px);
+    }
+
+    .david-role h3 {
+      font-size: clamp(18px, 3vw, 20px);
+      color: #283618;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .david-role h3 svg {
+      width: 24px;
+      height: 24px;
+      stroke: #606c38;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .david-columns {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 24px;
+    }
+
+    .david-col h4 {
+      font-size: 14px;
+      color: #606c38;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+
+    .david-col ul {
+      list-style: none;
+      font-size: 14px;
+      color: #444;
+    }
+
+    .david-col li {
+      padding: 4px 0;
+      padding-left: 24px;
+      position: relative;
+    }
+
+    .david-col.yes li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 14px;
+      height: 14px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232e7d32' stroke-width='3'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") no-repeat center;
+      background-size: contain;
+    }
+
+    .david-col.no li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 14px;
+      height: 14px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c62828' stroke-width='3'%3E%3Cline x1='18' y1='6' x2='6' y2='18'/%3E%3Cline x1='6' y1='6' x2='18' y2='18'/%3E%3C/svg%3E") no-repeat center;
+      background-size: contain;
+    }
+
+    .analytics-section {
+      background: #1a1a2e;
+      color: white;
+      border-radius: 16px;
+      padding: clamp(20px, 4vw, 32px);
+      margin-bottom: clamp(24px, 5vw, 40px);
+    }
+
+    .analytics-section h2 {
+      color: white;
+      border-bottom-color: #4ade80;
+    }
+
+    .analytics-section > p {
+      font-size: 15px;
+      color: #c0c0c0;
+      margin-bottom: 20px;
+    }
+
+    .opt-in-levels {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .opt-level {
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+      padding: clamp(16px, 3vw, 20px);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .opt-level h4 {
+      font-size: 16px;
+      color: #4ade80;
+      margin-bottom: 8px;
+    }
+
+    .opt-level p {
+      font-size: 13px;
+      color: #aaa;
+      margin-bottom: 12px;
+    }
+
+    .opt-level .example {
+      font-size: 12px;
+      color: #777;
+      font-style: italic;
+      background: rgba(0,0,0,0.2);
+      padding: 8px;
+      border-radius: 6px;
+    }
+
+    .flow-section {
+      background: white;
+      border-radius: 12px;
+      padding: clamp(20px, 4vw, 28px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .flow-section h2 {
+      margin-bottom: 24px;
+    }
+
+    .flow-diagram {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .flow-step {
+      flex: 1;
+      min-width: 0;
+      text-align: center;
+      padding: clamp(12px, 2vw, 16px) clamp(8px, 1.5vw, 12px);
+      background: #f5f7f0;
+      border-radius: 10px;
+    }
+
+    .flow-step .num {
+      width: 28px;
+      height: 28px;
+      background: #606c38;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      margin: 0 auto 8px;
+    }
+
+    .flow-step h4 {
+      font-size: clamp(12px, 2vw, 14px);
+      color: #283618;
+      margin-bottom: 4px;
+    }
+
+    .flow-step p {
+      font-size: clamp(10px, 1.5vw, 11px);
+      color: #666;
+      line-height: 1.4;
+    }
+
+    .flow-arrow {
+      font-size: 16px;
+      color: #606c38;
+      flex-shrink: 0;
+    }
+
+    .flow-arrow svg {
+      width: 20px;
+      height: 20px;
+      stroke: #606c38;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .bottom-message {
+      background: #f5f7f0;
+      border-radius: 12px;
+      padding: clamp(20px, 4vw, 28px);
+      text-align: center;
+      margin-top: clamp(24px, 5vw, 40px);
+    }
+
+    .bottom-message h3 {
+      font-size: clamp(18px, 3vw, 20px);
+      color: #283618;
+      margin-bottom: 12px;
+    }
+
+    .bottom-message p {
+      font-size: clamp(14px, 2.5vw, 16px);
+      color: #555;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 600px) {
+      .flow-diagram {
+        flex-direction: column;
+        gap: 12px;
+      }
+      .flow-arrow svg {
+        transform: rotate(90deg);
+      }
+      .flow-step {
+        width: 100%;
+      }
+    }
+
+    @media print {
+      body { background: white; padding: 20px; }
+      .philosophy { background: #333 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .analytics-section { background: #333 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .stakeholder, .david-role, .flow-section, .bottom-message { box-shadow: none; border: 1px solid #ddd; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Who Runs What</h1>
+      <div class="subtitle">Distributed ownership, shared infrastructure</div>
+    </header>
+
+    <div class="philosophy">
+      <h2>The Model: We Build, You Own</h2>
+      <p>This can't run on one person. It shouldn't. The whole point is that <strong>each stakeholder owns their piece</strong>. We provide the vision and the infrastructure. You bring your expertise, your relationships, your energy. Together we build something none of us could build alone.</p>
+    </div>
+
+    <div class="david-role">
+      <h3>
+        <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        Infrastructure & Vision
+      </h3>
+      <div class="david-columns">
+        <div class="david-col yes">
+          <h4>What We Do</h4>
+          <ul>
+            <li>Build & maintain the technology</li>
+            <li>Design the system architecture</li>
+            <li>Create pitch materials & documentation</li>
+            <li>Onboard new stakeholders</li>
+            <li>Aggregate anonymized analytics</li>
+            <li>Coordinate between domains (when asked)</li>
+            <li>Fix things when they break</li>
+          </ul>
+        </div>
+        <div class="david-col no">
+          <h4>What We Don't Do</h4>
+          <ul>
+            <li>Run the business discount program</li>
+            <li>Design the quests or storylines</li>
+            <li>Manage library integration</li>
+            <li>Organize community events</li>
+            <li>Make decisions for stakeholders</li>
+            <li>Control what data you share</li>
+            <li>Take a cut of transactions</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <section>
+      <h2>Stakeholder Domains</h2>
+      <div class="stakeholder-grid">
+
+        <div class="stakeholder">
+          <div class="stakeholder-header">
+            <span class="stakeholder-icon">
+              <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </span>
+            <div>
+              <h3>Business Champion</h3>
+              <div class="role">Commerce Layer Owner</div>
+            </div>
+          </div>
+          <p>A respected business owner who recruits other businesses, coordinates discount tiers, and advocates for the program at association meetings.</p>
+          <div class="they-own">
+            <h4>They Own</h4>
+            <ul>
+              <li>Business recruitment & onboarding</li>
+              <li>Setting discount standards</li>
+              <li>Kinderbucks acceptance policies</li>
+              <li>Business-to-business data sharing decisions</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="stakeholder">
+          <div class="stakeholder-header">
+            <span class="stakeholder-icon">
+              <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </span>
+            <div>
+              <h3>Library Partner</h3>
+              <div class="role">Learning Layer Owner</div>
+            </div>
+          </div>
+          <p>The programming manager or librarian who integrates book checkouts, hosts training sessions, and collaborates on educational content.</p>
+          <div class="they-own">
+            <h4>They Own</h4>
+            <ul>
+              <li>Book checkout points integration</li>
+              <li>Senior training sessions</li>
+              <li>CLINK! bag logging</li>
+              <li>Educational storyline content</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="stakeholder">
+          <div class="stakeholder-header">
+            <span class="stakeholder-icon">
+              <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M16 8h.01M8 8h.01M8 16h.01M16 16h.01M12 12h.01"/></svg>
+            </span>
+            <div>
+              <h3>Quest Designer</h3>
+              <div class="role">Game Layer Owner</div>
+            </div>
+          </div>
+          <p>A D&D enthusiast, teacher, or creative person who designs scavenger hunts, seasonal storylines, and badge challenges.</p>
+          <div class="they-own">
+            <h4>They Own</h4>
+            <ul>
+              <li>Quest storylines & narrative</li>
+              <li>Seasonal event design</li>
+              <li>Badge requirements & theming</li>
+              <li>Difficulty balancing</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="stakeholder">
+          <div class="stakeholder-header">
+            <span class="stakeholder-icon">
+              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </span>
+            <div>
+              <h3>History Curator</h3>
+              <div class="role">Content Layer Owner</div>
+            </div>
+          </div>
+          <p>A local historian, historical society member, or history buff who writes the content that QR codes link to.</p>
+          <div class="they-own">
+            <h4>They Own</h4>
+            <ul>
+              <li>Landmark descriptions</li>
+              <li>Heritage trail content</li>
+              <li>Van Buren / Mohican / Dutch stories</li>
+              <li>Fact-checking & accuracy</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="stakeholder">
+          <div class="stakeholder-header">
+            <span class="stakeholder-icon">
+              <svg viewBox="0 0 24 24"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/><path d="M13 13l6 6"/></svg>
+            </span>
+            <div>
+              <h3>Outdoor Leader</h3>
+              <div class="role">Movement Layer Owner</div>
+            </div>
+          </div>
+          <p>A scout leader, trail volunteer, or outdoor enthusiast who designs nature badges and trail challenges.</p>
+          <div class="they-own">
+            <h4>They Own</h4>
+            <ul>
+              <li>Nature badge requirements</li>
+              <li>Trail route design</li>
+              <li>Seasonal outdoor challenges</li>
+              <li>Youth engagement activities</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="stakeholder">
+          <div class="stakeholder-header">
+            <span class="stakeholder-icon">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+            </span>
+            <div>
+              <h3>Creative Lead</h3>
+              <div class="role">Brand & Materials Owner</div>
+            </div>
+          </div>
+          <p>A local artist or designer who creates the visual identity-currency design, badge artwork, signage, the $8 bill.</p>
+          <div class="they-own">
+            <h4>They Own</h4>
+            <ul>
+              <li>Kinderbucks design</li>
+              <li>Badge & patch artwork</li>
+              <li>Signage & poster design</li>
+              <li>Visual brand consistency</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="stakeholder">
+          <div class="stakeholder-header">
+            <span class="stakeholder-icon">
+              <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </span>
+            <div>
+              <h3>Community Voice</h3>
+              <div class="role">Outreach & Feedback Owner</div>
+            </div>
+          </div>
+          <p>A connected resident who spreads the word, gathers feedback, and represents different community groups (seniors, families, newcomers).</p>
+          <div class="they-own">
+            <h4>They Own</h4>
+            <ul>
+              <li>Word-of-mouth recruitment</li>
+              <li>Feedback collection</li>
+              <li>Accessibility advocacy</li>
+              <li>Community temperature-taking</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="stakeholder">
+          <div class="stakeholder-header">
+            <span class="stakeholder-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+            </span>
+            <div>
+              <h3>Sustainability Lead</h3>
+              <div class="role">Stewardship Layer Owner</div>
+            </div>
+          </div>
+          <p>An environmentalist or community organizer who designs the green track-recycling programs, cleanup events, sustainability badges.</p>
+          <div class="they-own">
+            <h4>They Own</h4>
+            <ul>
+              <li>CLINK! program integration</li>
+              <li>Cleanup event coordination</li>
+              <li>Sustainability badge design</li>
+              <li>Environmental impact tracking</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <div class="analytics-section">
+      <h2>Opt-In Analytics: You Control What You Share</h2>
+      <p>The dashboard shows aggregate village data by default. But businesses can opt-in to share more-creating collective intelligence that helps everyone. <strong>You choose your level.</strong></p>
+
+      <div class="opt-in-levels">
+        <div class="opt-level">
+          <h4>Level 1: Private</h4>
+          <p>You see your own data. Nobody else sees anything about you.</p>
+          <div class="example">"I just want the discount program. Keep my numbers to myself."</div>
+        </div>
+
+        <div class="opt-level">
+          <h4>Level 2: Aggregate</h4>
+          <p>Your numbers contribute to village totals, but aren't individually visible.</p>
+          <div class="example">"I'm fine being part of 'total village visits' but don't show my specific numbers."</div>
+        </div>
+
+        <div class="opt-level">
+          <h4>Level 3: Transparent</h4>
+          <p>Other participating businesses can see your visit counts, trends, and patterns.</p>
+          <div class="example">"I want to compare notes with the bakery and the bookshop. Let's learn together."</div>
+        </div>
+      </div>
+    </div>
+
+    <section class="flow-section">
+      <h2>How Collaboration Works</h2>
+      <div class="flow-diagram">
+        <div class="flow-step">
+          <div class="num">1</div>
+          <h4>Pitch</h4>
+          <p>Share the vision doc that matches their interest</p>
+        </div>
+        <span class="flow-arrow">
+          <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+        <div class="flow-step">
+          <div class="num">2</div>
+          <h4>Excite</h4>
+          <p>They see themselves in it and get energized</p>
+        </div>
+        <span class="flow-arrow">
+          <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+        <div class="flow-step">
+          <div class="num">3</div>
+          <h4>Define</h4>
+          <p>Together, scope what they own and what they need</p>
+        </div>
+        <span class="flow-arrow">
+          <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+        <div class="flow-step">
+          <div class="num">4</div>
+          <h4>Build</h4>
+          <p>We provide infrastructure, they provide expertise</p>
+        </div>
+        <span class="flow-arrow">
+          <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+        <div class="flow-step">
+          <div class="num">5</div>
+          <h4>Own</h4>
+          <p>They run their domain, we maintain the platform</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="bottom-message">
+      <h3>The Goal: A Self-Sustaining Ecosystem</h3>
+      <p>When everyone owns their piece, the system doesn't depend on any one person. The library still runs book checkouts, the quest designer still writes storylines, and businesses still give discounts. That's resilience. That's community infrastructure.</p>
+    </div>
+  </div>
+</body>
+</html>
