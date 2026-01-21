@@ -6,293 +6,367 @@
   <title>OK Kinderhook - A Village Digital Cooperative</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
-    
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    @page {
-      size: letter;
-      margin: 0.5in;
+
+    :root {
+      --green: #2B5F2F;
+      --green-dark: #1a3a1a;
+      --green-light: #f0f7f0;
+      --blue: #4A90A4;
+      --gold: #B8860B;
     }
-    
+
     body {
       font-family: 'Inter', -apple-system, sans-serif;
-      background: #f5f5f5;
+      background: linear-gradient(135deg, #1e3a5f 0%, #2d5a8a 100%);
       min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      -webkit-print-color-adjust: exact !important;
-      print-color-adjust: exact !important;
+      padding: 1rem;
     }
-    
+
     .page {
-      width: 7.5in;
-      height: 10in;
+      max-width: 900px;
+      margin: 0 auto;
       background: white;
-      padding: 0.35in;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
     }
-    
+
+    /* Print - B&W */
     @media print {
-      body { background: white; padding: 0; display: block; }
-      .page { width: 100%; height: auto; box-shadow: none; padding: 0; }
+      @page { size: letter; margin: 0.5in; }
+      body { background: white; padding: 0; }
+      .page { box-shadow: none; }
+      .tagline-box, .accessibility-box { background: #333 !important; }
+      .pillar { border-top-color: #666 !important; }
+      header { border-bottom-color: #333 !important; }
+      h1, h2, h3 { color: #000 !important; }
+      .icon svg { stroke: #333 !important; }
     }
-    
+
     header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 4px solid var(--green);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 0.2in;
-      padding-bottom: 0.15in;
-      border-bottom: 4px solid #2B5F2F;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
-    
+
     h1 {
       font-family: Georgia, serif;
-      font-size: 38px;
+      font-size: clamp(1.5rem, 5vw, 2.25rem);
       font-weight: 700;
-      color: #1a3a1a;
+      color: var(--green-dark);
     }
-    
+
     .subtitle {
-      font-size: 16px;
+      font-size: 0.9rem;
       color: #555;
       margin-top: 2px;
     }
-    
+
     .tagline-box {
-      background: #2B5F2F;
+      background: linear-gradient(135deg, var(--green) 0%, #1e4a24 100%);
       color: white;
-      padding: 10px 18px;
+      padding: 0.65rem 1rem;
       border-radius: 8px;
       text-align: center;
     }
-    
+
     .tagline-box .tagline {
-      font-size: 15px;
+      font-size: 0.85rem;
       font-weight: 700;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
     }
-    
+
     .tagline-box .money { color: #90EE90; }
     .tagline-box .body { color: #87CEEB; }
     .tagline-box .mind { color: #FFD700; }
-    
+
+    .content {
+      padding: 1.25rem 1.5rem;
+    }
+
     .vision-statement {
-      background: linear-gradient(135deg, #f0f7f0 0%, #e8f4e8 100%);
+      background: linear-gradient(135deg, var(--green-light) 0%, #e8f4e8 100%);
       border-radius: 10px;
-      padding: 16px 20px;
-      margin-bottom: 0.2in;
-      font-size: 16px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.25rem;
+      font-size: 0.95rem;
       color: #333;
-      line-height: 1.5;
+      line-height: 1.55;
       text-align: center;
       border: 2px solid #c8e0c8;
     }
-    
+
     .vision-statement strong {
-      color: #1a3a1a;
+      color: var(--green-dark);
     }
-    
+
     h2 {
-      font-size: 18px;
-      color: #1a3a1a;
-      margin-bottom: 0.12in;
+      font-size: 1.05rem;
+      color: var(--green-dark);
+      margin-bottom: 0.75rem;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 0.5rem;
     }
-    
+
+    h2 .icon {
+      width: 22px;
+      height: 22px;
+    }
+
+    h2 .icon svg {
+      stroke: var(--green);
+      stroke-width: 2;
+      fill: none;
+    }
+
     .three-pillars {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      margin-bottom: 0.2in;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.85rem;
+      margin-bottom: 1.25rem;
     }
-    
+
     .pillar {
       background: #fafafa;
       border-radius: 10px;
-      padding: 14px;
+      padding: 1rem;
       border: 2px solid #e0e0e0;
       text-align: center;
     }
-    
-    .pillar.money { border-top: 5px solid #2B5F2F; }
-    .pillar.body { border-top: 5px solid #4A90A4; }
-    .pillar.mind { border-top: 5px solid #B8860B; }
-    
-    .pillar-icon {
-      font-size: 32px;
-      margin-bottom: 8px;
+
+    .pillar.money { border-top: 5px solid var(--green); }
+    .pillar.body { border-top: 5px solid var(--blue); }
+    .pillar.mind { border-top: 5px solid var(--gold); }
+
+    .pillar .icon {
+      width: 36px;
+      height: 36px;
+      margin: 0 auto 0.5rem;
     }
-    
+
+    .pillar.money .icon svg { stroke: var(--green); }
+    .pillar.body .icon svg { stroke: var(--blue); }
+    .pillar.mind .icon svg { stroke: var(--gold); }
+
+    .pillar .icon svg {
+      stroke-width: 2;
+      fill: none;
+    }
+
     .pillar h3 {
-      font-size: 16px;
+      font-size: 0.95rem;
       font-weight: 700;
-      color: #1a3a1a;
-      margin-bottom: 6px;
+      color: var(--green-dark);
+      margin-bottom: 0.4rem;
     }
-    
+
     .pillar p {
-      font-size: 13px;
+      font-size: 0.85rem;
       color: #555;
-      line-height: 1.4;
+      line-height: 1.45;
     }
-    
+
     .qr-section {
       background: #f8f8f8;
       border-radius: 10px;
-      padding: 14px 18px;
-      margin-bottom: 0.18in;
-      border-left: 5px solid #2B5F2F;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.25rem;
+      border-left: 5px solid var(--green);
     }
-    
-    .qr-section h2 {
-      margin-bottom: 10px;
+
+    .qr-section p {
+      font-size: 0.9rem;
+      color: #444;
+      margin-bottom: 0.75rem;
     }
-    
+
     .qr-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 0.5rem;
     }
-    
+
     .qr-item {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 13px;
+      gap: 0.5rem;
+      font-size: 0.8rem;
       color: #333;
     }
-    
-    .qr-item span:first-child {
-      font-size: 18px;
+
+    .qr-item .icon {
+      width: 18px;
+      height: 18px;
     }
-    
+
+    .qr-item .icon svg {
+      stroke: var(--green);
+      stroke-width: 2;
+      fill: none;
+    }
+
     .data-section {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 0.18in;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.25rem;
     }
-    
+
     .data-box {
-      background: #f0f7f0;
+      background: var(--green-light);
       border-radius: 10px;
-      padding: 14px 16px;
+      padding: 1rem;
       border: 2px solid #c8e0c8;
     }
-    
+
     .data-box h3 {
-      font-size: 15px;
+      font-size: 0.95rem;
       font-weight: 700;
-      color: #1a3a1a;
-      margin-bottom: 8px;
+      color: var(--green-dark);
+      margin-bottom: 0.5rem;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 0.5rem;
     }
-    
+
+    .data-box h3 .icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .data-box h3 .icon svg {
+      stroke: var(--green);
+      stroke-width: 2;
+      fill: none;
+    }
+
     .data-box p {
-      font-size: 13px;
+      font-size: 0.85rem;
       color: #444;
-      line-height: 1.45;
+      line-height: 1.5;
     }
-    
+
     .data-box .highlight {
-      background: #2B5F2F;
+      display: inline-block;
+      background: var(--green);
       color: white;
-      padding: 2px 8px;
+      padding: 0.15rem 0.5rem;
       border-radius: 4px;
       font-weight: 600;
-      font-size: 12px;
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
     }
-    
+
     .accessibility-row {
       display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 16px;
-      margin-bottom: 0.15in;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
     }
-    
+
+    @media (min-width: 600px) {
+      .accessibility-row {
+        grid-template-columns: 1fr auto;
+      }
+    }
+
     .accessibility-box {
-      background: #2B5F2F;
+      background: linear-gradient(135deg, var(--green) 0%, #1e4a24 100%);
       color: white;
       border-radius: 10px;
-      padding: 14px 18px;
+      padding: 1rem 1.25rem;
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 1rem;
     }
-    
+
     .accessibility-box .icon {
-      font-size: 32px;
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
     }
-    
+
+    .accessibility-box .icon svg {
+      stroke: white;
+      stroke-width: 2;
+      fill: none;
+    }
+
     .accessibility-box h4 {
-      font-size: 15px;
+      font-size: 0.95rem;
       font-weight: 700;
-      margin-bottom: 4px;
+      margin-bottom: 0.3rem;
     }
-    
+
     .accessibility-box p {
-      font-size: 13px;
+      font-size: 0.85rem;
       opacity: 0.9;
-      line-height: 1.35;
+      line-height: 1.4;
     }
-    
+
     .cost-box {
       background: #fff8e7;
       border: 2px solid #e6d5a8;
       border-radius: 10px;
-      padding: 14px 20px;
+      padding: 1rem 1.5rem;
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
-    
+
     .cost-box .amount {
-      font-size: 26px;
+      font-size: 1.5rem;
       font-weight: 800;
-      color: #1a3a1a;
+      color: var(--green-dark);
     }
-    
+
     .cost-box .label {
-      font-size: 12px;
+      font-size: 0.75rem;
       color: #666;
     }
-    
+
     footer {
-      margin-top: auto;
-      padding-top: 0.12in;
+      padding: 1rem 1.5rem;
       border-top: 2px solid #eee;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
-    
+
     footer .message {
-      font-size: 14px;
+      font-size: 0.9rem;
       color: #333;
-      max-width: 70%;
+      max-width: 65%;
     }
-    
+
     footer .message strong {
-      color: #1a3a1a;
+      color: var(--green-dark);
     }
-    
+
     footer .contact {
       text-align: right;
-      font-size: 12px;
+      font-size: 0.8rem;
       color: #666;
     }
-    
+
     footer .contact .name {
-      font-size: 14px;
+      font-size: 0.95rem;
       font-weight: 700;
-      color: #1a3a1a;
+      color: var(--green-dark);
+    }
+
+    .icon {
+      display: inline-block;
     }
   </style>
 </head>
@@ -305,95 +379,103 @@
       </div>
       <div class="tagline-box">
         <div class="tagline">
-          Use Your <span class="money">Money</span>. 
-          Use Your <span class="body">Body</span>. 
+          Use Your <span class="money">Money</span>.
+          Use Your <span class="body">Body</span>.
           Use Your <span class="mind">Mind</span>.
         </div>
       </div>
     </header>
-    
-    <div class="vision-statement">
-      <strong>A villager challenge:</strong> Like workplace wellness programs, but for our whole community. 
-      Shop local, walk the village, learn our history—and track your progress together.
-    </div>
-    
-    <div class="three-pillars">
-      <div class="pillar money">
-        <div class="pillar-icon">💵</div>
-        <h3>Use Your Money</h3>
-        <p>OK Member discounts at local businesses. Kinderbucks currency keeps dollars circulating here—not leaking to big box stores.</p>
+
+    <div class="content">
+      <div class="vision-statement">
+        <strong>A villager challenge:</strong> Like workplace wellness programs, but for our whole community.
+        Shop local, walk the village, learn our history - and track your progress together.
       </div>
-      
-      <div class="pillar body">
-        <div class="pillar-icon">🚶</div>
-        <h3>Use Your Body</h3>
-        <p>Walking challenges. Rail trail adventures. Scavenger hunts through the village. Earn rewards by exploring on foot.</p>
+
+      <div class="three-pillars">
+        <div class="pillar money">
+          <span class="icon"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></svg></span>
+          <h3>Use Your Money</h3>
+          <p>OK Member discounts at local businesses. Kinderbucks currency keeps dollars circulating here - not leaking to big box stores.</p>
+        </div>
+
+        <div class="pillar body">
+          <span class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg></span>
+          <h3>Use Your Body</h3>
+          <p>Walking challenges. Rail trail adventures. Discovery trails through the village. Earn rewards by exploring on foot.</p>
+        </div>
+
+        <div class="pillar mind">
+          <span class="icon"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></span>
+          <h3>Use Your Mind</h3>
+          <p>Seasonal storylines through village history. Learn about Mohican heritage, Dutch settlers, African American history, and more.</p>
+        </div>
       </div>
-      
-      <div class="pillar mind">
-        <div class="pillar-icon">📖</div>
-        <h3>Use Your Mind</h3>
-        <p>Seasonal storylines through village history. Learn about Mohican heritage, Dutch settlers, African American history, and more.</p>
+
+      <div class="qr-section">
+        <h2>
+          <span class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h.01M7 12h.01M7 17h.01M12 7h.01M12 12h.01M12 17h.01M17 7h.01M17 12h.01M17 17h.01"/></svg></span>
+          QR Codes Are Portals
+        </h2>
+        <p>Simple codes placed around the village connect people to whatever we want - and we can update them anytime:</p>
+        <div class="qr-grid">
+          <div class="qr-item"><span class="icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span> Local businesses</div>
+          <div class="qr-item"><span class="icon"><svg viewBox="0 0 24 24"><path d="M4 11a9 9 0 019-9 9 9 0 019 9"/><path d="M4 11v6a2 2 0 002 2h12a2 2 0 002-2v-6"/></svg></span> Historic sites</div>
+          <div class="qr-item"><span class="icon"><svg viewBox="0 0 24 24"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></span> Walking tours</div>
+          <div class="qr-item"><span class="icon"><svg viewBox="0 0 24 24"><path d="M5 18H3c-.6 0-1-.4-1-1V7c0-.6.4-1 1-1h10c.6 0 1 .4 1 1v11"/><path d="M14 9h4l4 4v4c0 .6-.4 1-1 1h-2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg></span> Rail trail access</div>
+          <div class="qr-item"><span class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span> Seasonal events</div>
+          <div class="qr-item"><span class="icon"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span> Art installations</div>
+          <div class="qr-item"><span class="icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></span> Nature spots</div>
+          <div class="qr-item"><span class="icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></span> Story chapters</div>
+        </div>
       </div>
-    </div>
-    
-    <div class="qr-section">
-      <h2>📱 QR Codes Are Portals</h2>
-      <p style="font-size: 14px; color: #444; margin-bottom: 12px;">
-        Simple codes placed around the village connect people to whatever we want—and we can update them anytime:
-      </p>
-      <div class="qr-grid">
-        <div class="qr-item"><span>🏪</span> Local businesses</div>
-        <div class="qr-item"><span>🏛️</span> Historic sites</div>
-        <div class="qr-item"><span>🗺️</span> Walking tours</div>
-        <div class="qr-item"><span>🚂</span> Rail trail access</div>
-        <div class="qr-item"><span>📅</span> Seasonal events</div>
-        <div class="qr-item"><span>🎭</span> Art installations</div>
-        <div class="qr-item"><span>🌳</span> Nature spots</div>
-        <div class="qr-item"><span>📖</span> Story chapters</div>
-      </div>
-    </div>
-    
-    <div class="data-section">
-      <div class="data-box">
-        <h3>📊 Community Intelligence</h3>
-        <p>
-          When people participate, we learn how the village moves: Which businesses thrive? Which corners need attention? Where do visitors go? 
-          <br><br>
-          <span class="highlight">Data owned by the village, not corporations.</span>
-        </p>
-      </div>
-      
-      <div class="data-box">
-        <h3>🔓 Radical Transparency</h3>
-        <p>
-          This is a <strong>digital cooperative</strong>. The village controls it. All data is shared openly with residents. No hidden algorithms. No selling information. Just insights to help our community grow.
-        </p>
-      </div>
-    </div>
-    
-    <div class="accessibility-row">
-      <div class="accessibility-box">
-        <div class="icon">🤝</div>
-        <div>
-          <h4>For Everyone, Regardless of Age or Ability</h4>
+
+      <div class="data-section">
+        <div class="data-box">
+          <h3>
+            <span class="icon"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+            Community Intelligence
+          </h3>
           <p>
-            Free demonstrations at the Kinderhook Memorial Library. Physical cards for those without smartphones. 
-            Large print materials. We meet people where they are.
+            When people participate, we learn how the village moves: Which businesses thrive? Which corners need attention? Where do visitors go?
+          </p>
+          <span class="highlight">Data owned by the village, not corporations.</span>
+        </div>
+
+        <div class="data-box">
+          <h3>
+            <span class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span>
+            Radical Transparency
+          </h3>
+          <p>
+            This is a <strong>digital cooperative</strong>. The village controls it. All data is shared openly with residents. No hidden algorithms. No selling information. Just insights to help our community grow.
           </p>
         </div>
       </div>
-      
-      <div class="cost-box">
-        <div class="amount">~$1,500</div>
-        <div class="label">to launch<br>free to operate</div>
+
+      <div class="accessibility-row">
+        <div class="accessibility-box">
+          <span class="icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></span>
+          <div>
+            <h4>For Everyone, Regardless of Age or Ability</h4>
+            <p>
+              Free demonstrations at the Kinderhook Memorial Library. Physical cards for those without smartphones.
+              Large print materials. We meet people where they are.
+            </p>
+          </div>
+        </div>
+
+        <div class="cost-box">
+          <div class="amount">~$1,500</div>
+          <div class="label">to launch<br>free to operate</div>
+        </div>
       </div>
     </div>
-    
+
     <footer>
       <div class="message">
-        <strong>Columbia County's oldest village.</strong> 
-        A model for how small communities can own their digital future—together.
+        <strong>Columbia County's oldest village.</strong>
+        A model for how small communities can own their digital future - together.
       </div>
       <div class="contact">
         <div class="name">David Nyman</div>

@@ -6,191 +6,192 @@
   <title>OK Kinderhook - The Habit Ladder</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
-    
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    
+
+    :root {
+      --green-darkest: #1a3a1a;
+      --green-dark: #2d5a2d;
+      --green: #4aa64a;
+      --green-light: #7bc47b;
+      --green-lightest: #a8d5a8;
+    }
+
     body {
       font-family: 'Inter', -apple-system, sans-serif;
-      background: linear-gradient(135deg, #1a3a1a 0%, #2d5a2d 100%);
+      background: linear-gradient(135deg, var(--green-darkest) 0%, var(--green-dark) 100%);
       min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
+      padding: 1rem;
     }
-    
+
     .slide {
-      width: 960px;
-      height: 540px;
+      max-width: 900px;
+      margin: 0 auto;
       background: white;
       border-radius: 12px;
-      padding: 40px 50px;
-      display: flex;
-      flex-direction: column;
+      padding: 1.5rem;
       box-shadow: 0 25px 50px rgba(0,0,0,0.3);
     }
-    
+
+    /* Print - B&W */
+    @media print {
+      body { background: white; padding: 0; }
+      .slide { box-shadow: none; border: 1px solid #ddd; }
+      .cost-badge { background: #333 !important; }
+      .step { border-bottom-color: #999 !important; }
+      h1, .step-title { color: #000 !important; }
+      .icon svg { stroke: #333 !important; }
+    }
+
     header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 24px;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
-    
+
     h1 {
-      font-size: 32px;
+      font-size: clamp(1.5rem, 4vw, 2rem);
       font-weight: 800;
-      color: #1a3a1a;
+      color: var(--green-darkest);
       line-height: 1.1;
     }
-    
+
     h1 span {
       display: block;
-      font-size: 18px;
+      font-size: 0.9rem;
       font-weight: 600;
       color: #666;
-      margin-top: 4px;
+      margin-top: 0.25rem;
     }
-    
+
     .cost-badge {
-      background: #1a3a1a;
+      background: var(--green-darkest);
       color: white;
-      padding: 8px 16px;
+      padding: 0.5rem 1rem;
       border-radius: 20px;
-      font-size: 13px;
+      font-size: 0.8rem;
       font-weight: 700;
+      white-space: nowrap;
     }
-    
+
     .ladder {
-      display: flex;
-      gap: 12px;
-      flex: 1;
-      align-items: stretch;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
     }
-    
+
     .step {
-      flex: 1;
       background: #f8faf8;
       border-radius: 12px;
-      padding: 20px 16px;
-      display: flex;
-      flex-direction: column;
+      padding: 1rem;
       position: relative;
       border-bottom: 4px solid #ccc;
-      transition: all 0.2s;
     }
-    
-    .step:nth-child(1) { border-bottom-color: #a8d5a8; }
-    .step:nth-child(2) { border-bottom-color: #7bc47b; }
-    .step:nth-child(3) { border-bottom-color: #4aa64a; }
-    .step:nth-child(4) { border-bottom-color: #2d7a2d; }
-    .step:nth-child(5) { border-bottom-color: #1a5a1a; background: #f0f7f0; }
-    
+
+    .step:nth-child(1) { border-bottom-color: var(--green-lightest); }
+    .step:nth-child(2) { border-bottom-color: var(--green-light); }
+    .step:nth-child(3) { border-bottom-color: var(--green); }
+    .step:nth-child(4) { border-bottom-color: var(--green-dark); }
+    .step:nth-child(5) { border-bottom-color: var(--green-darkest); background: #f0f7f0; }
+
     .step-number {
       position: absolute;
-      top: -10px;
-      left: 16px;
-      background: #1a3a1a;
+      top: -8px;
+      left: 12px;
+      background: var(--green-darkest);
       color: white;
-      width: 24px;
-      height: 24px;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 12px;
+      font-size: 0.7rem;
       font-weight: 700;
     }
-    
-    .step-icon {
-      font-size: 28px;
-      margin-bottom: 8px;
-      margin-top: 8px;
+
+    .step .icon {
+      width: 32px;
+      height: 32px;
+      margin: 0.5rem 0;
     }
-    
+
+    .step .icon svg {
+      width: 100%;
+      height: 100%;
+      stroke: var(--green-dark);
+      stroke-width: 2;
+      fill: none;
+    }
+
     .step-title {
-      font-size: 14px;
+      font-size: 0.9rem;
       font-weight: 700;
-      color: #1a3a1a;
-      margin-bottom: 6px;
+      color: var(--green-darkest);
+      margin-bottom: 0.35rem;
     }
-    
+
     .step-desc {
-      font-size: 11px;
+      font-size: 0.8rem;
       color: #555;
       line-height: 1.4;
-      flex: 1;
     }
-    
+
     .step-problem {
-      font-size: 10px;
+      font-size: 0.75rem;
       color: #888;
-      margin-top: 10px;
-      padding-top: 10px;
+      margin-top: 0.6rem;
+      padding-top: 0.6rem;
       border-top: 1px dashed #ddd;
       font-style: italic;
     }
-    
+
     .step-problem strong {
-      color: #1a3a1a;
+      color: var(--green-darkest);
       font-style: normal;
     }
-    
+
     .step-cost {
-      margin-top: 10px;
-      font-size: 11px;
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
       font-weight: 700;
-      color: #2d7a2d;
+      color: var(--green-dark);
     }
-    
-    .arrow {
-      display: flex;
-      align-items: center;
-      color: #1a3a1a;
-      font-size: 20px;
-      opacity: 0.3;
-    }
-    
+
     footer {
-      margin-top: 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-top: 16px;
+      padding-top: 1rem;
       border-top: 2px solid #eee;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
-    
+
     .takeaway {
-      font-size: 14px;
+      font-size: 0.9rem;
       color: #333;
-      max-width: 600px;
+      max-width: 500px;
     }
-    
+
     .takeaway strong {
-      color: #1a3a1a;
+      color: var(--green-darkest);
     }
-    
+
     .totals {
       text-align: right;
-      font-size: 12px;
+      font-size: 0.8rem;
       color: #666;
     }
-    
+
     .totals .big {
-      font-size: 18px;
+      font-size: 1.25rem;
       font-weight: 800;
-      color: #1a3a1a;
-    }
-    
-    @media print {
-      body { 
-        background: white; 
-        padding: 0;
-      }
-      .slide { 
-        box-shadow: none; 
-        border: 1px solid #ddd;
-      }
+      color: var(--green-darkest);
     }
   </style>
 </head>
@@ -203,82 +204,54 @@
       </h1>
       <div class="cost-badge">Zero cost to businesses</div>
     </header>
-    
+
     <div class="ladder">
       <div class="step">
         <div class="step-number">1</div>
-        <div class="step-icon">🎫</div>
+        <span class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
         <div class="step-title">Discount Card</div>
-        <div class="step-desc">
-          OK Members get exclusive discounts at participating businesses.
-        </div>
-        <div class="step-problem">
-          <strong>But:</strong> People forget. Old habits return.
-        </div>
+        <div class="step-desc">OK Members get exclusive discounts at participating businesses.</div>
+        <div class="step-problem"><strong>But:</strong> People forget. Old habits return.</div>
         <div class="step-cost">$0</div>
       </div>
-      
-      <div class="arrow">→</div>
-      
+
       <div class="step">
         <div class="step-number">2</div>
-        <div class="step-icon">📱</div>
+        <span class="icon"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg></span>
         <div class="step-title">Check-Ins</div>
-        <div class="step-desc">
-          Scan a QR code when you visit. See your history.
-        </div>
-        <div class="step-problem">
-          <strong>But:</strong> Seeing history isn't motivating.
-        </div>
+        <div class="step-desc">Scan a QR code when you visit. See your history.</div>
+        <div class="step-problem"><strong>But:</strong> Seeing history isn't motivating.</div>
         <div class="step-cost">$0</div>
       </div>
-      
-      <div class="arrow">→</div>
-      
+
       <div class="step">
         <div class="step-number">3</div>
-        <div class="step-icon">🔥</div>
+        <span class="icon"><svg viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"/></svg></span>
         <div class="step-title">Streaks & Badges</div>
-        <div class="step-desc">
-          Keep your streak alive. Earn badges for exploring.
-        </div>
-        <div class="step-problem">
-          <strong>But:</strong> Digital rewards feel hollow.
-        </div>
+        <div class="step-desc">Keep your streak alive. Earn badges for exploring.</div>
+        <div class="step-problem"><strong>But:</strong> Digital rewards feel hollow.</div>
         <div class="step-cost">$0</div>
       </div>
-      
-      <div class="arrow">→</div>
-      
+
       <div class="step">
         <div class="step-number">4</div>
-        <div class="step-icon">🎁</div>
+        <span class="icon"><svg viewBox="0 0 24 24"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 110-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 100-5C13 2 12 7 12 7z"/></svg></span>
         <div class="step-title">Swag Rewards</div>
-        <div class="step-desc">
-          Trade badges for real stuff: stickers, pins, postcards.
-        </div>
-        <div class="step-problem">
-          <strong>Now:</strong> Tangible. Collectible. Shareable.
-        </div>
+        <div class="step-desc">Trade badges for real stuff: stickers, pins, postcards.</div>
+        <div class="step-problem"><strong>Now:</strong> Tangible. Collectible. Shareable.</div>
         <div class="step-cost">~$500/yr</div>
       </div>
-      
-      <div class="arrow">→</div>
-      
+
       <div class="step">
         <div class="step-number">5</div>
-        <div class="step-icon">💵</div>
+        <span class="icon"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></svg></span>
         <div class="step-title">Kinderbucks</div>
-        <div class="step-desc">
-          Local currency. Keeps dollars circulating in the village.
-        </div>
-        <div class="step-problem">
-          <strong>Result:</strong> Sustainable local economy loop.
-        </div>
+        <div class="step-desc">Local currency. Keeps dollars circulating in the village.</div>
+        <div class="step-problem"><strong>Result:</strong> Sustainable local economy loop.</div>
         <div class="step-cost">~$1K once</div>
       </div>
     </div>
-    
+
     <footer>
       <div class="takeaway">
         <strong>Each layer makes the previous layer stickier.</strong><br>
