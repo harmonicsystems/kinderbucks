@@ -4,6 +4,7 @@ import Demo from './pages/Demo'
 import About from './pages/About'
 import Benefits from './pages/Benefits'
 import Businesses from './pages/Businesses'
+import Schedule from './pages/Schedule'
 import Exchange from './pages/Exchange'
 import Account from './pages/Account'
 import Profile from './pages/Profile'
@@ -25,6 +26,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/benefits" element={<Benefits />} />
         <Route path="/businesses" element={<Businesses />} />
+        <Route path="/schedule" element={<Schedule />} />
         <Route path="/exchange" element={<Exchange />} />
 
         {/* Member Pages */}

@@ -51,7 +51,7 @@ function Footer() {
           </h4>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             <Link to="/demo" style={{ color: 'var(--kb-gray-300)', fontSize: '0.9rem' }}>See Demo</Link>
-            <Link to="/about" style={{ color: 'var(--kb-gray-300)', fontSize: '0.9rem' }}>How It Works</Link>
+            <Link to="/schedule" style={{ color: 'var(--kb-gray-300)', fontSize: '0.9rem' }}>Business Hours</Link>
             <Link to="/benefits" style={{ color: 'var(--kb-gray-300)', fontSize: '0.9rem' }}>Member Benefits</Link>
             <Link to="/exchange" style={{ color: 'var(--kb-gray-300)', fontSize: '0.9rem' }}>Get Kinderbucks</Link>
             <Link to="/businesses" style={{ color: 'var(--kb-gray-300)', fontSize: '0.9rem' }}>For Businesses</Link>
